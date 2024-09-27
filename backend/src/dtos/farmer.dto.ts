@@ -16,6 +16,7 @@ export class CreateFarmerDTO {
 
   @IsString()
   @IsNotEmpty({ message: "phoneNumber is Required" })
+  @MinLength(10,{message:"Phone Number must be 10 characters long"})
   @MaxLength(10, { message: "Phone Number must be 10 characters long" })
   phoneNumber!: string;
 }
