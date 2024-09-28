@@ -13,3 +13,9 @@ export class DuplicatePhoneNumberError extends CustomError {
     super(message, 409);
   }
 }
+
+export class userAutheticationError extends CustomError{
+   constructor(message:string="user not found with this credentials"){
+    super(message,404)
+   }
+}

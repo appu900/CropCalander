@@ -27,3 +27,12 @@ export class FarmerResponseDTO{
   phoneNumber!: string;
   token!: string;
 }
+
+
+export class FarmerLoginDTO{
+  @IsNotEmpty()
+  phoneNumber!:string
+  
+  @IsNotEmpty()
+  password!:string
+}

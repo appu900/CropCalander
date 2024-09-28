@@ -7,7 +7,7 @@ export const errorHandler = (
   res: Response,
   next: NextFunction
 ) => {
-//   console.log(error.stack);
+  console.log(error.stack);
   res.status(StatusCodes.INTERNAL_SERVER_ERROR).json({
     ok: false,
     message: error.message || "An unexpected error occurred",
