@@ -33,11 +33,12 @@ class FarmerService {
           phoneNumber: data.phoneNumber,
         },
       });
+      const jwtToken = generateToken(farmer.id);
       return {
         name: farmer.name,
         email: farmer.email,
         phoneNumber: farmer.phoneNumber,
-        token: "token",
+        token: jwtToken,
       };
     } catch (error) {
       throw error;

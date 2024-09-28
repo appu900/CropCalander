@@ -1,4 +1,4 @@
-import { IsString, IsEmail, MinLength, IsNotEmpty, MaxLength, IsOptional } from "class-validator";
+import { IsString, IsEmail, MinLength, IsNotEmpty, MaxLength, IsOptional, minLength } from "class-validator";
 
 export class CreateFarmerDTO {
   @IsString({ message: "Name must be a string" })
@@ -30,9 +30,11 @@ export class FarmerResponseDTO{
 
 
 export class FarmerLoginDTO{
-  @IsNotEmpty()
+  @IsNotEmpty({message:"Phone Number is Required"})
+  @MinLength(10,{message:"Phone Number must be 10 characters long"})
+  @MaxLength(10,{message:"Phone Number must be 10 characters long"})
   phoneNumber!:string
   
-  @IsNotEmpty()
+  @IsNotEmpty({message:"Password is Required"})
   password!:string
 }
