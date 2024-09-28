@@ -1,5 +1,6 @@
 import { StatusCodes } from "http-status-codes";
 import {
+    AgriExpertLoginRequestDTO,
   AgriExpertRequestDto,
   AgriExpertResponseDto,
 } from "../dtos/Agriexpert.dto";
@@ -31,3 +32,22 @@ export const create = async (
     next(error);
   }
 };
+
+export const login = async(req:Request,res:Response,next:NextFunction) =>{
+    try {
+        const payload = req.body as AgriExpertLoginRequestDTO;
+        const response:AgriExpertResponseDto = await agriExpertService.agriExpertLogin(payload);
+        res.status(StatusCodes.OK).json({
+            ok:true,
+            response
+        })
+    } catch (error:any) {
+        if(error instanceof CustomError){
+            res.status(error.statusCode).json({
+                ok:false,
+                message:error.message
+            })
+        }
+        next(error)
+    }
+}

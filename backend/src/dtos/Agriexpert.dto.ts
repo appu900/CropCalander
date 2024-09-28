@@ -18,6 +18,16 @@ export class AgriExpertRequestDto {
   phoneNumber!: string;
 }
 
+export class AgriExpertLoginRequestDTO{
+    @IsString()
+    @IsEmail({}, { message: "Invalid Email" })
+    email!: string;
+    
+    @IsString()
+    @MinLength(4, { message: "Password must be at least 4 characters long" })
+    password!: string;
+}
+
 export class AgriExpertResponseDto {
   id!: number;
   @IsString()

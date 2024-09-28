@@ -1,11 +1,20 @@
-import { encryptPassword } from "../utils/encrypt.utils";
-import { AgriExpertRequestDto, AgriExpertResponseDto } from "../dtos/Agriexpert.dto";
+import { checkPassword, encryptPassword } from "../utils/encrypt.utils";
+import {
+    AgriExpertLoginRequestDTO,
+  AgriExpertRequestDto,
+  AgriExpertResponseDto,
+} from "../dtos/Agriexpert.dto";
 import { prisma } from "../prisma/client";
 import { generateToken } from "../utils/token.utils";
-import { DupliccateUserError } from "../utils/application.errors";
+import {
+  DupliccateUserError,
+  userAutheticationError,
+} from "../utils/application.errors";
 
 class AgriExpertService {
-  async createAgriExpert(requestData: AgriExpertRequestDto):Promise<AgriExpertResponseDto> {
+  async createAgriExpert(
+    requestData: AgriExpertRequestDto
+  ): Promise<AgriExpertResponseDto> {
     try {
       const existingAgriExpert = await prisma.agriExpert.findFirst({
         where: {
@@ -19,9 +28,12 @@ class AgriExpertService {
           ],
         },
       });
-      if(existingAgriExpert){
-        throw new DupliccateUserError("User with this email or phone number already exists")
-      } 
+
+      if (existingAgriExpert) {
+        throw new DupliccateUserError(
+          "User with this email or phone number already exists"
+        );
+      }
       const hashedPassword = encryptPassword(requestData.password);
       const newAgriExpert = await prisma.agriExpert.create({
         data: {
@@ -31,15 +43,48 @@ class AgriExpertService {
       });
       const jwtToken = generateToken(newAgriExpert.id);
       return {
-        id:newAgriExpert.id,
-        name:newAgriExpert.name,
-        token:jwtToken
+        id: newAgriExpert.id,
+        name: newAgriExpert.name,
+        token: jwtToken,
+      };
+    } catch (error) {
+      throw error;
+    }
+  }
+
+  //   ** purpose login a agri expert with email and password
+
+  async agriExpertLogin(
+    loginData: AgriExpertLoginRequestDTO
+  ): Promise<AgriExpertResponseDto> {
+    try {
+      const agriExpert = await prisma.agriExpert.findFirst({
+        where: {
+          email: loginData.email,
+        },
+      });
+      if (!agriExpert) {
+        throw new userAutheticationError(
+          `User not found with this ${loginData.email}`
+        );
       }
+      const correctPassword = checkPassword(
+        loginData.password,
+        agriExpert.password
+      );
+      if (!correctPassword) {
+        throw new userAutheticationError("Invalid Password");
+      }
+      const jwtToken = generateToken(agriExpert.id);
+      return {
+        id: agriExpert.id,
+        name: agriExpert.name,
+        token: jwtToken,
+      };
     } catch (error) {
       throw error;
     }
   }
 }
 
-
-export default AgriExpertService
+export default AgriExpertService;
