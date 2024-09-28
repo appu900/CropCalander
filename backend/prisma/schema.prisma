@@ -22,3 +22,14 @@ model Farmer{
   phoneNumber String @unique
   address String?
 }
+
+
+model AgriExpert{
+  id Int @id @default(autoincrement())
+  name String
+  email String @unique
+  password String
+  phoneNumber String @unique
+  address String?
+}
+
