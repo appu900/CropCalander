@@ -13,23 +13,73 @@ datasource db {
   url      = env("DATABASE_URL")
 }
 
-
-model Farmer{
-  id Int @id @default(autoincrement())
-  name String
-  email String? @unique
-  password String
-  phoneNumber String @unique
-  address String?
+model Farmer {
+  id            Int                   @id @default(autoincrement())
+  name          String
+  email         String?               @unique
+  password      String
+  phoneNumber   String                @unique
+  address       String?
+  cropsRequests CropCalandarRequest[]
 }
 
-
-model AgriExpert{
-  id Int @id @default(autoincrement())
-  name String
-  email String @unique
-  password String
-  phoneNumber String @unique
-  address String?
+model AgriExpert {
+  id                   Int                   @id @default(autoincrement())
+  name                 String
+  email                String                @unique
+  password             String
+  phoneNumber          String                @unique
+  cropCalandars        CropCalandar[]
+  cropCalanderRequests CropCalandarRequest[]
+  address              String?
 }
 
+model CropCalandarRequest {
+  id           Int           @id @default(autoincrement())
+  farmerId     Int
+  farmer       Farmer        @relation(fields: [farmerId], references: [id])
+  expert       AgriExpert    @relation(fields: [expertId], references: [id])
+  expertId     Int
+  cropName     String
+  cropType     String
+  filedSize    Float
+  location     String
+  season       String
+  status       RequestStatus @default(PENDING)
+  cropCalandar CropCalandar?
+  createdAt    DateTime      @default(now())
+  updatedAt    DateTime      @updatedAt
+
+  @@index([farmerId, status])
+}
+
+model CropCalandar {
+  id            Int                 @id @default(autoincrement())
+  requestId     Int                 @unique
+  farmerRequest CropCalandarRequest @relation(fields: [requestId], references: [id])
+  expert        AgriExpert          @relation(fields: [expertId], references: [id])
+  expertId      Int
+  season        String
+  createdAt     DateTime            @default(now())
+  activities    Activity[]
+  updatedAt     DateTime            @updatedAt
+}
+
+model Activity {
+  id           Int          @id @default(autoincrement())
+  calandarId   Int
+  cropCalandar CropCalandar @relation(fields: [calandarId], references: [id])
+  activityName String
+  activityType String
+  startDate    DateTime
+  endDate      DateTime
+  description  String?
+
+  @@index([calandarId, startDate])
+}
+
+enum RequestStatus {
+  PENDING
+  APPROVED
+  COMPLETED
+}
