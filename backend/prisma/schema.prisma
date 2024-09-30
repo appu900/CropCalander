@@ -38,13 +38,14 @@ model CropCalandarRequest {
   id           Int           @id @default(autoincrement())
   farmerId     Int
   farmer       Farmer        @relation(fields: [farmerId], references: [id])
-  expert       AgriExpert    @relation(fields: [expertId], references: [id])
-  expertId     Int
+  expert       AgriExpert?   @relation(fields: [expertId], references: [id])
+  expertId     Int?
   cropName     String
   cropType     String
   filedSize    Float
   location     String
   season       String
+  startDate    DateTime
   status       RequestStatus @default(PENDING)
   cropCalandar CropCalandar?
   createdAt    DateTime      @default(now())
