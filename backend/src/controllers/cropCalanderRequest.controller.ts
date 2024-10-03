@@ -1,5 +1,5 @@
 import { AuthenticatedRequest } from "../middleware/authenticationMiddleware";
-import { CropCalanderRequestDTO } from "../dtos/CropcalanderRequest";
+import { CropCalanderRequestDTO, CropCalendarReqResponseDTO } from "../dtos/CropcalanderRequest";
 import CropCalanderRequestService from "../services/CropcalandarRequest";
 import { Request, Response, NextFunction } from "express";
 import { StatusCodes } from "http-status-codes";
@@ -32,4 +32,19 @@ export const create = async (
   } catch (error) {
     next(error);
   }
+
 };
+
+
+// ** get all pending Request..
+export const getAllpendingRequsts = async (req:Request,res:Response,next:NextFunction)=>{
+  try {
+    const response:CropCalendarReqResponseDTO[] = await cropRequest.getAllPendingCropCalanderRequest();
+    res.status(StatusCodes.OK).json({
+      ok:true,
+      response
+    })
+  } catch (error) {
+    next(error)
+  }
+}

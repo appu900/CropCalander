@@ -1,8 +1,15 @@
-import { CropCalanderRequestDTO, CropCalendarReqResponseDTO } from "../dtos/CropcalanderRequest";
+import {
+  CropCalanderRequestDTO,
+  CropCalendarReqResponseDTO,
+  CropCalendarRequestMapper,
+} from "../dtos/CropcalanderRequest";
 import { prisma } from "../prisma/client";
 
 class CropCalanderRequestService {
-  async createCropCalanderRequest(farmerId:number,payload: CropCalanderRequestDTO):Promise<CropCalendarReqResponseDTO> {
+  async createCropCalanderRequest(
+    farmerId: number,
+    payload: CropCalanderRequestDTO
+  ): Promise<CropCalendarReqResponseDTO> {
     try {
       const response = await prisma.cropCalandarRequest.create({
         data: {
@@ -23,8 +30,24 @@ class CropCalanderRequestService {
         location: response.location,
         startDate: response.startDate,
         cropType: response.cropType,
-        status:response.status
+        status: response.status,
       };
+    } catch (error) {
+      throw error;
+    }
+  }
+
+  // ** get all cropcalander request with pending status
+
+  async getAllPendingCropCalanderRequest(): Promise<CropCalendarReqResponseDTO[]> {
+    try {
+      const response = await prisma.cropCalandarRequest.findMany({
+        where: {
+          status: "PENDING",
+        },
+      });
+      const responseObj = CropCalendarRequestMapper.toDTOList(response);
+      return responseObj;
     } catch (error) {
       throw error;
     }
