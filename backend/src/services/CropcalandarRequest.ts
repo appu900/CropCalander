@@ -39,7 +39,9 @@ class CropCalanderRequestService {
 
   // ** get all cropcalander request with pending status
 
-  async getAllPendingCropCalanderRequest(): Promise<CropCalendarReqResponseDTO[]> {
+  async getAllPendingCropCalanderRequest(): Promise<
+    CropCalendarReqResponseDTO[]
+  > {
     try {
       const response = await prisma.cropCalandarRequest.findMany({
         where: {
@@ -48,6 +50,26 @@ class CropCalanderRequestService {
       });
       const responseObj = CropCalendarRequestMapper.toDTOList(response);
       return responseObj;
+    } catch (error) {
+      throw error;
+    }
+  }
+
+  async findCropCalandersRequestByFarmerId(farmerId: number) {
+    try {
+      const response = await prisma.cropCalandarRequest.findMany({
+        where: {
+          farmerId: farmerId,
+        },
+        include: {
+          expert: {
+            select: {
+              name: true,
+            },
+          },
+        },
+      });
+      return response;
     } catch (error) {
       throw error;
     }

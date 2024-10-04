@@ -101,8 +101,8 @@ class AgriExpertService {
     `;
 
         if (!request) {
-          throw new Error("Request already accepted or not found.");
-        }
+          throw new Error("Request already accepted");
+        }   
 
         const updatedRequest = await prisma.cropCalandarRequest.update({
           where: {
