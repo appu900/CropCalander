@@ -25,3 +25,9 @@ export class userAutheticationError extends CustomError{
     super(message,404)
    }
 }
+
+export class RequestAlreadyAccepted extends CustomError{
+  constructor(message:string=`request already accepted`){
+    super(message,409)
+  }
+}

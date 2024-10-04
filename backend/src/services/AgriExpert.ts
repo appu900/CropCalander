@@ -1,6 +1,6 @@
 import { checkPassword, encryptPassword } from "../utils/encrypt.utils";
 import {
-    AgriExpertLoginRequestDTO,
+  AgriExpertLoginRequestDTO,
   AgriExpertRequestDto,
   AgriExpertResponseDto,
 } from "../dtos/Agriexpert.dto";
@@ -81,6 +81,41 @@ class AgriExpertService {
         name: agriExpert.name,
         token: jwtToken,
       };
+    } catch (error) {
+      throw error;
+    }
+  }
+
+  // ** asign agri expert for a cropCalanderrequest
+
+  async acceptRequest(expertId: number, requestedCropCalandarId: number) {
+    try {
+      return await prisma.$transaction(async (prisma) => {
+        const request = await prisma.$queryRaw`
+      SELECT * 
+      FROM "CropCalandarRequest"
+      WHERE id = ${requestedCropCalandarId}
+      AND "status" = 'PENDING'
+      AND "expertId" IS NULL
+      FOR UPDATE
+    `;
+
+        if (!request) {
+          throw new Error("Request already accepted or not found.");
+        }
+
+        const updatedRequest = await prisma.cropCalandarRequest.update({
+          where: {
+            id: requestedCropCalandarId,
+          },
+          data: {
+            status: "ACCEPTED",
+            expertId: expertId,
+          },
+        });
+
+        return updatedRequest;
+      });
     } catch (error) {
       throw error;
     }
