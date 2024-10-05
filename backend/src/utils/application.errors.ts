@@ -14,6 +14,8 @@ export class DuplicatePhoneNumberError extends CustomError {
   }
 }
 
+  
+
 export class DupliccateUserError extends CustomError{
   constructor(message:string="user already exits"){
     super(message,409)
@@ -28,6 +30,12 @@ export class userAutheticationError extends CustomError{
 
 export class RequestAlreadyAccepted extends CustomError{
   constructor(message:string=`request already accepted`){
+    super(message,409)
+  }
+}
+
+export class CropCalendarExistsError extends CustomError{
+  constructor(message:string=`crop calendar already exists for this request`){
     super(message,409)
   }
 }
