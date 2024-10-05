@@ -12,3 +12,16 @@ export class CropCalanderActivities {
   @IsNotEmpty()
   description!: String;
 }
+
+export class CropCalendarActivityDTO {
+  @IsNotEmpty()
+  activityName!: string;
+  @IsNotEmpty()
+  activityType!: string;
+  @IsNotEmpty()
+  startDate!: Date;
+  @IsNotEmpty()
+  endDate!: Date;
+  @IsNotEmpty()
+  description!: string;
+}

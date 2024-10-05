@@ -129,6 +129,16 @@ class AgriExpertService {
         where: {
           expertId: expertId,
         },
+        include:{
+          cropCalandar:{
+            select:{
+              id:true,
+              season:true,
+              createdAt:true,
+              activities:true
+            }
+          }
+        }
       });
       return response;
     } catch (error) {
