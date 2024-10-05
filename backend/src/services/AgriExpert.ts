@@ -102,7 +102,7 @@ class AgriExpertService {
 
         if (!request) {
           throw new Error("Request already accepted");
-        }   
+        }
 
         const updatedRequest = await prisma.cropCalandarRequest.update({
           where: {
@@ -116,6 +116,21 @@ class AgriExpertService {
 
         return updatedRequest;
       });
+    } catch (error) {
+      throw error;
+    }
+  }
+
+  // ** get all cropcalander request assigned to a agriexpert
+
+  async getRequestsByExpertId(expertId: number) {
+    try {
+      const response = await prisma.cropCalandarRequest.findMany({
+        where: {
+          expertId: expertId,
+        },
+      });
+      return response;
     } catch (error) {
       throw error;
     }

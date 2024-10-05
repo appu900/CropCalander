@@ -14,6 +14,8 @@ export class CropCalanderRequestDTO {
   season!: string;
   @IsNotEmpty()
   startDate!: Date;
+  @IsNotEmpty()
+  seedVaraity!: string;
 }
 
 export class CropCalendarReqResponseDTO {

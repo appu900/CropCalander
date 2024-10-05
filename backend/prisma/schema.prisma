@@ -40,9 +40,11 @@ model CropCalandarRequest {
   farmer       Farmer        @relation(fields: [farmerId], references: [id])
   expert       AgriExpert?   @relation(fields: [expertId], references: [id])
   expertId     Int?
+  projectName  String?
   cropName     String
   cropType     String
   filedSize    Float
+  seedVaraity  String?
   location     String
   season       String
   startDate    DateTime
@@ -83,4 +85,4 @@ enum RequestStatus {
   PENDING
   ACCEPTED
   COMPLETED
-}
+}  
