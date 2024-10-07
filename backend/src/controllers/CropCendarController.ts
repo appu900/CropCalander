@@ -72,3 +72,16 @@ export const addAcitivity = async (
     next(error);
   }
 };
+
+
+
+export const changeStatusToCompleted = async (req:Request,res:Response,next:NextFunction) =>{
+  try {
+     const cropCalendarId = req.params.cropCalendarId;
+     res.status(StatusCodes.ACCEPTED).json({
+      ok:true,
+     })
+  } catch (error) {
+    next(error)
+  }
+}

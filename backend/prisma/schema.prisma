@@ -35,23 +35,24 @@ model AgriExpert {
 }
 
 model CropCalandarRequest {
-  id           Int           @id @default(autoincrement())
-  farmerId     Int
-  farmer       Farmer        @relation(fields: [farmerId], references: [id])
-  expert       AgriExpert?   @relation(fields: [expertId], references: [id])
-  expertId     Int?
-  projectName  String?
-  cropName     String
-  cropType     String
-  filedSize    Float
-  seedVaraity  String?
-  location     String
-  season       String
-  startDate    DateTime
-  status       RequestStatus @default(PENDING)
-  cropCalandar CropCalandar?
-  createdAt    DateTime      @default(now())
-  updatedAt    DateTime      @updatedAt
+  id                 Int           @id @default(autoincrement())
+  farmerId           Int
+  farmer             Farmer        @relation(fields: [farmerId], references: [id])
+  expert             AgriExpert?   @relation(fields: [expertId], references: [id])
+  expertId           Int?
+  projectName        String?
+  projectDescription String?
+  cropName           String
+  cropType           String
+  filedSize          Float
+  seedVaraity        String?
+  location           String
+  season             String
+  startDate          DateTime
+  status             RequestStatus @default(PENDING)
+  cropCalandar       CropCalandar?
+  createdAt          DateTime      @default(now())
+  updatedAt          DateTime      @updatedAt
 
   @@index([farmerId, status])
 }
@@ -85,4 +86,4 @@ enum RequestStatus {
   PENDING
   ACCEPTED
   COMPLETED
-}  
+}

@@ -3,6 +3,10 @@ import { IsNotEmpty } from "class-validator";
 
 export class CropCalanderRequestDTO {
   @IsNotEmpty()
+  projectName!: string;
+  @IsNotEmpty()
+  projectDescription!: string;
+  @IsNotEmpty()
   cropName!: string;
   @IsNotEmpty()
   cropType!: string;
@@ -16,6 +20,7 @@ export class CropCalanderRequestDTO {
   startDate!: Date;
   @IsNotEmpty()
   seedVaraity!: string;
+
 }
 
 export class CropCalendarReqResponseDTO {
@@ -27,6 +32,8 @@ export class CropCalendarReqResponseDTO {
   season!: string;
   startDate!: Date;
   status!: string;
+  projectName!: string;
+  projectDescription!: string;
 }
 
 export class CropCalendarRequestMapper {
@@ -40,6 +47,8 @@ export class CropCalendarRequestMapper {
       season: data.season,
       startDate: data.startDate,
       status: data.status,
+      projectName: data.projectName ?? "",
+      projectDescription: data.projectDescription ?? "",
     };
   }
 

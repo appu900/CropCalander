@@ -20,6 +20,9 @@ class CropCalanderRequestService {
           filedSize: payload.fieldSize,
           startDate: payload.startDate,
           cropType: payload.cropType,
+          projectName:payload.projectName,
+          projectDescription:payload.projectDescription,
+          seedVaraity:payload.seedVaraity
         },
       });
       return {
@@ -31,6 +34,8 @@ class CropCalanderRequestService {
         startDate: response.startDate,
         cropType: response.cropType,
         status: response.status,
+        projectName:response.projectName??"",
+        projectDescription:response.projectDescription??""
       };
     } catch (error) {
       throw error;

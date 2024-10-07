@@ -79,6 +79,24 @@ class CropCelendarService {
       throw error;
     }
   }
+
+  // ** change status to comppletd **
+
+  async changeStatusToCompleted(requestId:number):Promise<boolean>{
+    try {
+      const response = await prisma.cropCalandarRequest.update({
+        where:{
+          id:requestId
+        },
+        data:{
+          status:"COMPLETED"
+        }
+      })
+      return true;
+    } catch (error) {
+      throw error;
+    }
+  }
 }
 
 export default CropCelendarService;
