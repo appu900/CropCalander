@@ -9,6 +9,7 @@ import { cropCalendarActivitySchema } from "../validation/cropcalendarActivitySc
 
 const cropCalendarService = new CropCelendarService();
 
+
 const bulkCropCalendarActivitySchema = z.object({
   activities:z.array(cropCalendarActivitySchema)
 })
@@ -75,13 +76,22 @@ export const addAcitivity = async (
 
 
 
-export const changeStatusToCompleted = async (req:Request,res:Response,next:NextFunction) =>{
+export const handlechangeStatusToCompleted = async (req:Request,res:Response,next:NextFunction) =>{
   try {
+     
      const cropCalendarId = req.params.cropCalendarId;
+     const response = await cropCalendarService.changeStatusToCompleted(Number(cropCalendarId))
      res.status(StatusCodes.ACCEPTED).json({
       ok:true,
+      response
      })
   } catch (error) {
+    if(error instanceof CustomError){
+      res.status(error.statusCode).json({
+        ok:false,
+        error:error.message
+      })
+    }
     next(error)
   }
 }

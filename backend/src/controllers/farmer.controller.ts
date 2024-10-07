@@ -93,3 +93,32 @@ export const getAllCropCalendarRequestForFarmer = async (
     next(error);
   }
 };
+
+export const handleAllCompletedCropcalendarRequest = async (
+  req: AuthenticatedRequest,
+  res: Response,
+  next: NextFunction
+) => {
+  try {
+    const farmerId: number | undefined = req.userId;
+    if (!farmerId) {
+      res.status(StatusCodes.BAD_REQUEST).json({
+        ok: false,
+        error: "UnAuthorized request",
+      });
+      return;
+    }
+
+    const response =
+      await cropCalendarRequestService.findCropCalendarRequestWithStatusCompleted(
+        farmerId
+      );
+     res.status(StatusCodes.OK).json({
+      ok: true,
+      response
+      
+    });
+  } catch (error) {
+    next(error);
+  }
+};

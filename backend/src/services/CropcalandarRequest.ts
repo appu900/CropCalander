@@ -20,9 +20,9 @@ class CropCalanderRequestService {
           filedSize: payload.fieldSize,
           startDate: payload.startDate,
           cropType: payload.cropType,
-          projectName:payload.projectName,
-          projectDescription:payload.projectDescription,
-          seedVaraity:payload.seedVaraity
+          projectName: payload.projectName,
+          projectDescription: payload.projectDescription,
+          seedVaraity: payload.seedVaraity,
         },
       });
       return {
@@ -34,8 +34,8 @@ class CropCalanderRequestService {
         startDate: response.startDate,
         cropType: response.cropType,
         status: response.status,
-        projectName:response.projectName??"",
-        projectDescription:response.projectDescription??""
+        projectName: response.projectName ?? "",
+        projectDescription: response.projectDescription ?? "",
       };
     } catch (error) {
       throw error;
@@ -72,6 +72,46 @@ class CropCalanderRequestService {
               name: true,
             },
           },
+        },
+      });
+      console.log("response is - ",response)
+      if(!response){
+        return "no cropcalndar found"
+      }
+      return response;
+    } catch (error) {
+      throw error;
+    }
+  }
+
+  async findCropCalendarRequestWithStatusCompleted(farmerId: number) {
+    try {
+      const response = await prisma.cropCalandarRequest.findMany({
+        where: {
+          farmerId: farmerId,
+          status:"COMPLETED"
+        },
+        include: {
+          cropCalandar:{
+            select:{
+              farmerRequest:true,
+              activities:true
+            }
+          }
+        },
+      });
+      return response;
+    } catch (error) {
+      throw error;
+    }
+  }
+
+  async findCropCalendarRequestwithStatusAccepted(farmerId: number) {
+    try {
+      const response = await prisma.cropCalandarRequest.findMany({
+        where: {
+          status: "ACCEPTED",
+          farmerId: farmerId,
         },
       });
       return response;

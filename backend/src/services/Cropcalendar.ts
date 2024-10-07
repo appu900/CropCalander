@@ -82,16 +82,26 @@ class CropCelendarService {
 
   // ** change status to comppletd **
 
-  async changeStatusToCompleted(requestId:number):Promise<boolean>{
+  async changeStatusToCompleted(requestId: number): Promise<boolean> {
     try {
-      const response = await prisma.cropCalandarRequest.update({
-        where:{
-          id:requestId
+      const cropCalendar = await prisma.cropCalandarRequest.findUnique({
+        where: {
+          id: requestId,
         },
-        data:{
-          status:"COMPLETED"
-        }
-      })
+      });
+
+      if (!cropCalendar) {
+        throw new EntityNotFoundError("Crop Calendar not found");
+      }
+      const response = await prisma.cropCalandarRequest.update({
+        where: {
+          id: requestId,
+        },
+        data: {
+          status: "COMPLETED",
+        },
+      });
+      console.log("response is - ", response);
       return true;
     } catch (error) {
       throw error;

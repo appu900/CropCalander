@@ -6,7 +6,7 @@ import { CropCalanderRequestDTO } from "../dtos/CropcalanderRequest";
 const router = express.Router();
 
 router.post("/create", authMiddleware,validateDTO(CropCalanderRequestDTO), create);
-
 router.get("/pending",getAllpendingRequsts)
+
 
 export default router;

@@ -1,6 +1,5 @@
 import { IsNotEmpty } from "class-validator";
 
-
 export class CropCalanderRequestDTO {
   @IsNotEmpty()
   projectName!: string;
@@ -20,7 +19,6 @@ export class CropCalanderRequestDTO {
   startDate!: Date;
   @IsNotEmpty()
   seedVaraity!: string;
-
 }
 
 export class CropCalendarReqResponseDTO {
@@ -37,7 +35,7 @@ export class CropCalendarReqResponseDTO {
 }
 
 export class CropCalendarRequestMapper {
-  static toDTO(data:any): CropCalendarReqResponseDTO {
+  static toDTO(data: any): CropCalendarReqResponseDTO {
     return {
       id: data.id,
       farmerId: data.farmerId,
@@ -52,9 +50,7 @@ export class CropCalendarRequestMapper {
     };
   }
 
-  static toDTOList(
-    models:any[]
-  ): CropCalendarReqResponseDTO[] {
+  static toDTOList(models: any[]): CropCalendarReqResponseDTO[] {
     return models.map((model) => this.toDTO(model));
   }
 }
