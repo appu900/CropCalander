@@ -2,6 +2,8 @@ import { StatusCodes } from "http-status-codes";
 import { NextFunction, Request, Response } from "express";
 import {
   CreateFarmerDTO,
+  FarmerCropCalendarActivityDTO,
+  FarmerCropCalendarCreationDTO,
   FarmerLoginDTO,
   FarmerResponseDTO,
 } from "../dtos/farmer.dto";
@@ -82,7 +84,7 @@ export const getAllCropCalendarRequestForFarmer = async (
       return;
     }
     const response =
-      await cropCalendarRequestService.findCropCalandersRequestByFarmerId(
+      await farmerService.getALLCropCalendarOfFarmer(
         farmerId
       );
     res.status(StatusCodes.OK).json({
@@ -113,12 +115,88 @@ export const handleAllCompletedCropcalendarRequest = async (
       await cropCalendarRequestService.findCropCalendarRequestWithStatusCompleted(
         farmerId
       );
-     res.status(StatusCodes.OK).json({
+    res.status(StatusCodes.OK).json({
       ok: true,
-      response
-      
+      response,
     });
   } catch (error) {
     next(error);
   }
 };
+
+// ** purpose : create a new crop calendar for farmer
+
+export const createOwnCropCalendar = async (
+  req: AuthenticatedRequest,
+  res: Response,
+  next: NextFunction
+) => {
+  try {
+    const farmerId = req.userId;
+    const payload: FarmerCropCalendarCreationDTO = req.body;
+    if (!farmerId) {
+      res.status(StatusCodes.UNAUTHORIZED).json({
+        ok: false,
+        message: "Unauthorized, no token provided",
+      });
+      return;
+    }
+    const response = await farmerService.createOwnCropCalendar(
+      payload,
+      farmerId
+    );
+    res.status(StatusCodes.CREATED).json({
+      ok: true,
+      response,
+    });
+  } catch (error) {
+    next(error);
+  }
+};
+
+// ** purpose : add activity to crop calendar of farmer
+
+export const addActivityToFarmerCropCalendar = async (
+  req: Request,
+  res: Response,
+  next: NextFunction
+) => {
+  try {
+    const cropCalendarId = parseInt(req.params.id);
+    const payload:FarmerCropCalendarActivityDTO = req.body;
+    const response = await farmerService.addActivityToCropcalendar(payload,cropCalendarId);
+    res.status(StatusCodes.CREATED).json({
+      ok:true,
+      response
+    })
+  } catch (error) {
+    if(error instanceof CustomError){
+      res.status(error.statusCode).json({
+        ok:false,
+        message:error.message
+      })
+    }
+    next(error)
+  }
+};
+
+
+export const getAllCropCalendarsOfFarmer = async (req:AuthenticatedRequest,res:Response,next:NextFunction) =>{
+  try {
+    const farmerId:number | undefined = req.userId;
+    if(!farmerId){
+      res.status(StatusCodes.UNAUTHORIZED).json({
+        ok:false,
+        message:"Unauthorized, no token provided"
+      })
+      return;
+    }
+    const response = await farmerService.getALLCropCalendarOfFarmer(farmerId);
+    res.status(StatusCodes.OK).json({
+      ok:true,
+      response
+    })
+  } catch (error) {
+    next(error)
+  }
+}

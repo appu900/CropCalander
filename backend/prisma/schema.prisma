@@ -14,13 +14,40 @@ datasource db {
 }
 
 model Farmer {
-  id            Int                   @id @default(autoincrement())
-  name          String
-  email         String?               @unique
-  password      String
-  phoneNumber   String                @unique
-  address       String?
-  cropsRequests CropCalandarRequest[]
+  id                  Int                   @id @default(autoincrement())
+  name                String
+  email               String?               @unique
+  password            String
+  phoneNumber         String                @unique
+  address             String?
+  cropsRequests       CropCalandarRequest[]
+  farmerCropCalandars FarmerCropCalendar[]
+}
+
+model FarmerCropCalendar {
+  id                         Int                          @id @default(autoincrement())
+  farmerId                   Int
+  farmer                     Farmer                       @relation(fields: [farmerId], references: [id])
+  projectName                String?
+  projectDescription         String?
+  cropName                   String
+  cropType                   String
+  fieldSize                  Float
+  seedVariety                String?
+  location                   String
+  season                     String
+  startDate                  DateTime
+  FarmerCropCalendarActivity FarmerCropCalendarActivity[]
+}
+
+model FarmerCropCalendarActivity {
+  id                   Int                @id @default(autoincrement())
+  farmerCropCalendarId Int
+  farmerCropCalendar   FarmerCropCalendar @relation(fields: [farmerCropCalendarId], references: [id])
+  activityName         String
+  startTime            String
+  endTime              String
+  description          String?
 }
 
 model AgriExpert {
