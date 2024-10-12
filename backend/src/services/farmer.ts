@@ -15,7 +15,7 @@ import {
 import { generateToken } from "../utils/token.utils";
 
 class FarmerService {
-  async createFarmer(data: CreateFarmerDTO,imageUrl:string | null): Promise<FarmerResponseDTO> {
+  async createFarmer(data: CreateFarmerDTO): Promise<FarmerResponseDTO> {
     try {
       const hashedPassword: string = encryptPassword(data.password);
       const existingFarmer = await prisma.farmer.findUnique({
@@ -34,7 +34,7 @@ class FarmerService {
           email: data.email,
           password: hashedPassword,
           phoneNumber: data.phoneNumber,
-          profilePic:imageUrl ? imageUrl : "https://avatar.iran.liara.run/public/23"
+          profilePic:data.profilePic ? data.profilePic : "https://avatar.iran.liara.run/public/23"
         },
       });
       const jwtToken = generateToken(farmer.id);

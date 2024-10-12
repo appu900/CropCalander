@@ -1,4 +1,5 @@
 import { StatusCodes } from "http-status-codes";
+import { z } from "zod";
 import { NextFunction, Request, Response } from "express";
 import {
   CreateFarmerDTO,
@@ -12,14 +13,14 @@ import { CustomError } from "../utils/application.errors";
 import { AuthenticatedRequest } from "../middleware/authenticationMiddleware";
 import CropCalanderRequestService from "../services/CropcalandarRequest";
 import multer from "multer";
-import sharp from 'sharp'
+import sharp from "sharp";
 import { uploadToS3 } from "../config/s3.config";
+import { createFarmerSchema } from "../validation/createFarmerValidaton";
 const farmerService = new FarmerService();
 const cropCalendarRequestService = new CropCalanderRequestService();
 
 const storage = multer.memoryStorage(); // Store files in memory
 const upload = multer({ storage, limits: { fileSize: 5 * 1024 * 1024 } }); // 5MB file size limit
-
 
 // ** purpose : create a new farmer
 
@@ -29,32 +30,42 @@ export async function createFarmer(
   next: NextFunction
 ) {
   try {
+    // ** validate the request
+
+    const validatePayload = createFarmerSchema.parse(req.body);
     const createFarmerPayload = req.body as CreateFarmerDTO;
-    console.log("rrquest file",req.file)
-    let fileUrl = "";
-    if(req.file){
+    if (req.file) {
       const fileName = `${Date.now()}-${req.file.originalname}`;
-      let optimizedBuffer:Buffer | null = await sharp(req.file.buffer).resize(1024).toBuffer();
-      fileUrl = await uploadToS3(optimizedBuffer,fileName,req.file.mimetype);
-      console.log(fileUrl)
-      optimizedBuffer = null
+      let optimizedBuffer: Buffer | null = await sharp(req.file.buffer)
+        .resize(1024)
+        .toBuffer();
+      const fileUrl = await uploadToS3(
+        optimizedBuffer,
+        fileName,
+        req.file.mimetype
+      );
+      createFarmerPayload.profilePic = fileUrl;
+      optimizedBuffer = null;
     }
-    
+
     const response: FarmerResponseDTO = await farmerService.createFarmer(
-      createFarmerPayload,fileUrl
+      createFarmerPayload
     );
 
     res.status(StatusCodes.CREATED).json({
       ok: true,
-      response
+      response,
     });
-
-
   } catch (error: any) {
     if (error instanceof CustomError) {
       res.status(error.statusCode).json({
         ok: false,
         message: error.message,
+      });
+    } else if (error instanceof z.ZodError) {
+      res.status(StatusCodes.BAD_REQUEST).json({
+        ok: false,
+        error: error.errors,
       });
     }
 
@@ -103,10 +114,7 @@ export const getAllCropCalendarRequestForFarmer = async (
       });
       return;
     }
-    const response =
-      await farmerService.getALLCropCalendarOfFarmer(
-        farmerId
-      );
+    const response = await farmerService.getALLCropCalendarOfFarmer(farmerId);
     res.status(StatusCodes.OK).json({
       ok: true,
       response,
@@ -183,40 +191,46 @@ export const addActivityToFarmerCropCalendar = async (
 ) => {
   try {
     const cropCalendarId = parseInt(req.params.id);
-    const payload:FarmerCropCalendarActivityDTO = req.body;
-    const response = await farmerService.addActivityToCropcalendar(payload,cropCalendarId);
+    const payload: FarmerCropCalendarActivityDTO = req.body;
+    const response = await farmerService.addActivityToCropcalendar(
+      payload,
+      cropCalendarId
+    );
     res.status(StatusCodes.CREATED).json({
-      ok:true,
-      response
-    })
+      ok: true,
+      response,
+    });
   } catch (error) {
-    if(error instanceof CustomError){
+    if (error instanceof CustomError) {
       res.status(error.statusCode).json({
-        ok:false,
-        message:error.message
-      })
+        ok: false,
+        message: error.message,
+      });
     }
-    next(error)
+    next(error);
   }
 };
 
-
-export const getAllCropCalendarsOfFarmer = async (req:AuthenticatedRequest,res:Response,next:NextFunction) =>{
+export const getAllCropCalendarsOfFarmer = async (
+  req: AuthenticatedRequest,
+  res: Response,
+  next: NextFunction
+) => {
   try {
-    const farmerId:number | undefined = req.userId;
-    if(!farmerId){
+    const farmerId: number | undefined = req.userId;
+    if (!farmerId) {
       res.status(StatusCodes.UNAUTHORIZED).json({
-        ok:false,
-        message:"Unauthorized, no token provided"
-      })
+        ok: false,
+        message: "Unauthorized, no token provided",
+      });
       return;
     }
     const response = await farmerService.getALLCropCalendarOfFarmer(farmerId);
     res.status(StatusCodes.OK).json({
-      ok:true,
-      response
-    })
+      ok: true,
+      response,
+    });
   } catch (error) {
-    next(error)
+    next(error);
   }
-}
+};

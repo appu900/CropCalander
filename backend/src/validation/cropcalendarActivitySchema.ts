@@ -9,3 +9,5 @@ export const cropCalendarActivitySchema = z.object({
     endDate: z.coerce.date(),   // Coerces to Date if valid date string is passed
     description: z.string().min(1, "Description is required") // Ensures it's a non-empty string
   });
+
+  

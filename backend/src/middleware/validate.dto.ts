@@ -5,7 +5,6 @@ import { validate, ValidationError } from "class-validator";
 
 export function validateDTO(dtoClass:any){
     return (req:Request,res:Response,next:NextFunction) =>{
-      console.log("incomimng request is",req.body)
        const dtoObject = plainToClass(dtoClass,req.body);
        validate(dtoObject).then((errors:ValidationError[]) =>{
             if(errors.length > 0){

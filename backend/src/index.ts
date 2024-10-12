@@ -38,7 +38,7 @@ async function startServer() {
 
   })
 
-  // await checkDatabaseConnection(prisma);
+  await checkDatabaseConnection(prisma);
   app.listen(3000, () => {
     console.log("Server is running on http://localhost:3000");
   });
