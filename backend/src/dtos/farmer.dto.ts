@@ -8,6 +8,10 @@ import {
   minLength,
 } from "class-validator";
 
+
+
+
+
 export class CreateFarmerDTO {
   @IsString({ message: "Name must be a string" })
   @IsNotEmpty({ message: "Name is required" })
@@ -29,12 +33,16 @@ export class CreateFarmerDTO {
   phoneNumber!: string;
 }
 
+
 export class FarmerResponseDTO {
   name!: string;
   email!: string | null;
   phoneNumber!: string;
   token!: string;
+  role!:string;
+  profilePic!:string | null
 }
+
 
 export class FarmerLoginDTO {
   @IsNotEmpty({ message: "Phone Number is Required" })
@@ -79,11 +87,7 @@ export class FarmerCropCalendarCreationDTO {
   startDate!: Date;
 }
 
-
-
-
-export class FarmerCropCalendarActivityDTO{
-
+export class FarmerCropCalendarActivityDTO {
   @IsNotEmpty()
   activityName!: string;
 

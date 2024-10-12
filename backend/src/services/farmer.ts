@@ -15,7 +15,7 @@ import {
 import { generateToken } from "../utils/token.utils";
 
 class FarmerService {
-  async createFarmer(data: CreateFarmerDTO): Promise<FarmerResponseDTO> {
+  async createFarmer(data: CreateFarmerDTO,imageUrl:string | null): Promise<FarmerResponseDTO> {
     try {
       const hashedPassword: string = encryptPassword(data.password);
       const existingFarmer = await prisma.farmer.findUnique({
@@ -34,6 +34,7 @@ class FarmerService {
           email: data.email,
           password: hashedPassword,
           phoneNumber: data.phoneNumber,
+          profilePic:imageUrl ? imageUrl : "https://avatar.iran.liara.run/public/23"
         },
       });
       const jwtToken = generateToken(farmer.id);
@@ -42,6 +43,8 @@ class FarmerService {
         email: farmer.email,
         phoneNumber: farmer.phoneNumber,
         token: jwtToken,
+        role:farmer.role,
+        profilePic:farmer.profilePic
       };
     } catch (error) {
       throw error;
@@ -71,6 +74,8 @@ class FarmerService {
         email: farmer.email,
         phoneNumber: farmer.phoneNumber,
         token: jwtToken,
+        role:farmer.role,
+        profilePic:farmer.profilePic
       };
     } catch (error) {
       throw error;
@@ -166,5 +171,4 @@ export default FarmerService;
 // ** post will contain title description
 // ** profile picture
 // ** role based authetication .
-
 // ** Agri expert will just 

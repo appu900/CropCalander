@@ -4,10 +4,12 @@ import { addActivityToFarmerCropCalendar, createFarmer, createOwnCropCalendar, f
 
 import { CreateFarmerDTO, FarmerCropCalendarActivityDTO, FarmerCropCalendarCreationDTO, FarmerLoginDTO } from '../dtos/farmer.dto';
 import { validateDTO } from '../middleware/validate.dto';
-import { authMiddleware } from '../middleware/authenticationMiddleware';
+import { authMiddleware } from '../middleware/authenticationMiddleware';  
+import { uploadSingleImage } from '../middleware/multerUpload.Middleware';
+
 const router = express.Router();
 
-router.post('/farmer',validateDTO(CreateFarmerDTO),createFarmer);
+router.post('/farmer',uploadSingleImage,createFarmer);
 router.post('/farmer/login',validateDTO(FarmerLoginDTO),farmerLogin)
 router.get('/farmer/ccr',authMiddleware,getAllCropCalendarRequestForFarmer)
 router.get("/farmer/ccr/completed",authMiddleware,handleAllCompletedCropcalendarRequest)

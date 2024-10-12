@@ -11,8 +11,15 @@ import FarmerService from "../services/farmer";
 import { CustomError } from "../utils/application.errors";
 import { AuthenticatedRequest } from "../middleware/authenticationMiddleware";
 import CropCalanderRequestService from "../services/CropcalandarRequest";
+import multer from "multer";
+import sharp from 'sharp'
+import { uploadToS3 } from "../config/s3.config";
 const farmerService = new FarmerService();
 const cropCalendarRequestService = new CropCalanderRequestService();
+
+const storage = multer.memoryStorage(); // Store files in memory
+const upload = multer({ storage, limits: { fileSize: 5 * 1024 * 1024 } }); // 5MB file size limit
+
 
 // ** purpose : create a new farmer
 
@@ -23,13 +30,26 @@ export async function createFarmer(
 ) {
   try {
     const createFarmerPayload = req.body as CreateFarmerDTO;
+    console.log("rrquest file",req.file)
+    let fileUrl = "";
+    if(req.file){
+      const fileName = `${Date.now()}-${req.file.originalname}`;
+      let optimizedBuffer:Buffer | null = await sharp(req.file.buffer).resize(1024).toBuffer();
+      fileUrl = await uploadToS3(optimizedBuffer,fileName,req.file.mimetype);
+      console.log(fileUrl)
+      optimizedBuffer = null
+    }
+    
     const response: FarmerResponseDTO = await farmerService.createFarmer(
-      createFarmerPayload
+      createFarmerPayload,fileUrl
     );
+
     res.status(StatusCodes.CREATED).json({
       ok: true,
-      response,
+      response
     });
+
+
   } catch (error: any) {
     if (error instanceof CustomError) {
       res.status(error.statusCode).json({

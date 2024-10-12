@@ -20,7 +20,7 @@ model Farmer {
   password            String
   phoneNumber         String                @unique
   role                String                @default("FARMER")
-  profilePic          String?
+  profilePic          String?               @default("https://api.dicebear.com/9.x/lorelei/svg")
   address             String?
   cropsRequests       CropCalandarRequest[]
   farmerCropCalandars FarmerCropCalendar[]
