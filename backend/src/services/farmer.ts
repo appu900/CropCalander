@@ -157,3 +157,14 @@ class FarmerService {
 }
 
 export default FarmerService;
+
+
+
+
+
+// ** farmer can make a post 
+// ** post will contain title description
+// ** profile picture
+// ** role based authetication .
+
+// ** Agri expert will just 

@@ -19,9 +19,30 @@ model Farmer {
   email               String?               @unique
   password            String
   phoneNumber         String                @unique
+  role                String                @default("FARMER")
+  profilePic          String?
   address             String?
   cropsRequests       CropCalandarRequest[]
   farmerCropCalandars FarmerCropCalendar[]
+  posts               Post[]
+}
+
+model Post {
+  id       Int       @id @default(autoincrement())
+  title    String
+  image    String?
+  postedBy Int
+  farmer   Farmer    @relation(fields: [postedBy], references: [id])
+  comments Comment[]
+}
+
+model Comment {
+  id           Int        @id @default(autoincrement())
+  content      String
+  postId       Int
+  post         Post       @relation(fields: [postId], references: [id])
+  agriexpertId Int
+  agriexpert   AgriExpert @relation(fields: [agriexpertId], references: [id])
 }
 
 model FarmerCropCalendar {
@@ -48,6 +69,7 @@ model FarmerCropCalendarActivity {
   startTime            String
   endTime              String
   description          String?
+  image                String?
 }
 
 model AgriExpert {
@@ -57,8 +79,11 @@ model AgriExpert {
   password             String
   phoneNumber          String                @unique
   cropCalandars        CropCalandar[]
+  role                 String                @default("AGRI_EXPERT")
   cropCalanderRequests CropCalandarRequest[]
   address              String?
+  profilePic           String?
+  comments             Comment[]
 }
 
 model CropCalandarRequest {
