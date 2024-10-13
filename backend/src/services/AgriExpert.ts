@@ -39,6 +39,7 @@ class AgriExpertService {
         data: {
           ...requestData,
           password: hashedPassword,
+          profilePic: requestData.profilePic,
         },
       });
       const jwtToken = generateToken(newAgriExpert.id);
@@ -46,6 +47,7 @@ class AgriExpertService {
         id: newAgriExpert.id,
         name: newAgriExpert.name,
         token: jwtToken,
+        profilePic: newAgriExpert.profilePic
       };
     } catch (error) {
       throw error;
@@ -80,6 +82,7 @@ class AgriExpertService {
         id: agriExpert.id,
         name: agriExpert.name,
         token: jwtToken,
+        profilePic:agriExpert.profilePic
       };
     } catch (error) {
       throw error;
@@ -129,18 +132,40 @@ class AgriExpertService {
         where: {
           expertId: expertId,
         },
-        include:{
-          cropCalandar:{
-            select:{
-              id:true,
-              season:true,
-              createdAt:true,
-              activities:true
-            }
-          }
-        }
+        include: {
+          cropCalandar: {
+            select: {
+              id: true,
+              season: true,
+              createdAt: true,
+              activities: true,
+            },
+          },
+        },
       });
       return response;
+    } catch (error) {
+      throw error;
+    }
+  }
+
+  async makeAPost(postContent: string, imageUrl: string, userId: number) {
+    try {
+      const post = await prisma.post.create({
+        data: {
+          content: postContent,
+          image: imageUrl,
+          agriExpertId: userId,
+          postedByType: "AGRI_EXPERT",
+        },
+        select: {
+          id: true,
+          content: true,
+          image: true,
+          postedByType: true,
+        },
+      });
+      return post;
     } catch (error) {
       throw error;
     }

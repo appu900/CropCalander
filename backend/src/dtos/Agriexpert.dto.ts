@@ -16,6 +16,9 @@ export class AgriExpertRequestDto {
   @MinLength(10, { message: "Phone Number must be 10 characters long" })
   @MaxLength(10, { message: "Phone Number must be 10 characters long" })
   phoneNumber!: string;
+
+  @IsString()
+  profilePic!:string
 }
 
 export class AgriExpertLoginRequestDTO{
@@ -34,4 +37,8 @@ export class AgriExpertResponseDto {
   name!: string;
   @IsString()
   token!: string;
+  @IsString()
+  profilePic!:string | null
+
+
 }

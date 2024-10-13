@@ -25,29 +25,45 @@ model Farmer {
   cropsRequests       CropCalandarRequest[]
   farmerCropCalandars FarmerCropCalendar[]
   posts               Post[]
+  comments            Comment[]
+  likes               Like[]
 }
-
-
 
 model Post {
-  id                 Int         @id @default(autoincrement())
-  content             String
-  image              String?
-  postedByType       UserType
+  id           Int         @id @default(autoincrement())
+  content      String
+  image        String?
+  postedByType UserType
   farmerId     Int?
   agriExpertId Int?
-  farmer             Farmer?     @relation(fields: [farmerId], references: [id])
-  agriExpert         AgriExpert? @relation(fields: [agriExpertId], references: [id])
-  comments           Comment[]
+  farmer       Farmer?     @relation(fields: [farmerId], references: [id])
+  agriExpert   AgriExpert? @relation(fields: [agriExpertId], references: [id])
+  comments     Comment[]
+  likes Like[]
+}
+  
+model Comment {
+  id           Int         @id @default(autoincrement())
+  content      String
+  postId       Int
+  post         Post        @relation(fields: [postId], references: [id])
+  userType     UserType
+  farmerId     Int?
+  agriExpertId Int?
+  agriexpert   AgriExpert? @relation(fields: [agriExpertId], references: [id])
+  farmer       Farmer?     @relation(fields: [farmerId], references: [id])
 }
 
-model Comment {
-  id          Int        @id @default(autoincrement())
-  content     String
-  postId      Int
-  post        Post       @relation(fields: [postId], references: [id])
-  commentedBy Int
-  agriexpert  AgriExpert @relation(fields: [commentedBy], references: [id])
+model Like{
+  id Int @id @default(autoincrement())
+  postId Int
+  post Post @relation(fields: [postId],references: [id])
+  userType UserType
+  agriExpertId Int?
+  farmerId Int?
+  farmer Farmer? @relation(fields: [farmerId], references: [id])
+  agriExpert AgriExpert? @relation(fields: [agriExpertId], references: [id])
+
 }
 
 model FarmerCropCalendar {
@@ -90,6 +106,7 @@ model AgriExpert {
   profilePic           String?
   comments             Comment[]
   Posts                Post[]
+  likes                Like[]
 }
 
 model CropCalandarRequest {

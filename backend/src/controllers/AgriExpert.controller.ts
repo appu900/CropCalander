@@ -1,4 +1,5 @@
 import { StatusCodes } from "http-status-codes";
+import { z } from "zod";
 import {
   AgriExpertLoginRequestDTO,
   AgriExpertRequestDto,
@@ -8,6 +9,9 @@ import AgriExpertService from "../services/AgriExpert";
 import { Request, Response, NextFunction } from "express";
 import { CustomError } from "../utils/application.errors";
 import { AuthenticatedRequest } from "../middleware/authenticationMiddleware";
+import { agriExpertValidationSchema } from "../validation/agriExpertValidation";
+import { uploadToS3 } from "../config/s3.config";
+import sharp from "sharp";
 const agriExpertService = new AgriExpertService();
 
 export const create = async (
@@ -16,9 +20,23 @@ export const create = async (
   next: NextFunction
 ) => {
   try {
-    const payload = req.body as AgriExpertRequestDto;
+    const payload = req.body;
+    const validatePayload = agriExpertValidationSchema.parse(payload);
+    let fileUrl = "";
+    if (req.file) {
+      const fileName = `${Date.now()}-${req.file.originalname}`;
+      let optimizedBuffer: Buffer | null = await sharp(req.file.buffer)
+        .resize(1024)
+        .toBuffer();
+      fileUrl = await uploadToS3(optimizedBuffer, fileName, req.file.mimetype);
+      optimizedBuffer = null;
+    }
+    const createAgriExperPayload: AgriExpertRequestDto = {
+      ...payload,
+      profilePic: fileUrl,
+    };
     const response: AgriExpertResponseDto =
-      await agriExpertService.createAgriExpert(payload);
+      await agriExpertService.createAgriExpert(createAgriExperPayload);
     res.status(StatusCodes.CREATED).json({
       ok: true,
       response,
@@ -28,6 +46,11 @@ export const create = async (
       res.status(error.statusCode).json({
         ok: false,
         message: error.message,
+      });
+    } else if (error instanceof z.ZodError) {
+      res.status(StatusCodes.BAD_REQUEST).json({
+        ok: false,
+        error: error.errors,
       });
     }
     next(error);
@@ -104,6 +127,63 @@ export const getAllRequestByAgriexpert = async (
       agriexpertId
     );
     res.status(StatusCodes.OK).json({
+      ok: true,
+      response,
+    });
+  } catch (error) {
+    next(error);
+  }
+};
+
+// ** make a post for feed
+
+export const craeteAPost = async (
+  req: AuthenticatedRequest,
+  res: Response,
+  next: NextFunction
+) => {
+  try {
+    const userId: number | undefined = req.userId;
+
+    // ** handle UserId 
+    if (!userId) {
+      res.status(StatusCodes.UNAUTHORIZED).json({
+        ok: false,
+        message: "Unauthorized, no token provided",
+      });
+      return;
+    }
+
+    // ** handle file upload
+    let fileUrl = "";
+    if (req.file) {
+      const fileName = `${Date.now()}-${req.file.originalname}`;
+      let optimizedBuffer: Buffer | null = await sharp(req.file.buffer)
+        .resize(1024)
+        .toBuffer();
+      fileUrl = await uploadToS3(optimizedBuffer, fileName, req.file.mimetype);
+      optimizedBuffer = null;
+    }
+
+    // ** handle post content
+    const postContent = req.body.content;
+    if (postContent.length < 10) {
+      res.status(StatusCodes.BAD_REQUEST).json({
+        ok: false,
+        error: "the caption should be atlest 10 character",
+      });
+      return;
+    }
+
+    // ** make a post
+    const response = await agriExpertService.makeAPost(
+      postContent,
+      fileUrl,
+      userId
+    );
+
+    // ** send response
+    res.status(StatusCodes.CREATED).json({
       ok: true,
       response,
     });
