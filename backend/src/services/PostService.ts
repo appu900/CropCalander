@@ -1,9 +1,14 @@
+import { EntityNotFoundError } from "../utils/application.errors";
 import { prisma } from "../prisma/client";
 
 class PostService {
   async getAllPosts() {
     try {
-      const posts = await prisma.post.findMany();
+      const posts = await prisma.post.findMany({
+        include: {
+          comments: true,
+        },
+      });
       return posts;
     } catch (error) {
       throw error;
@@ -18,6 +23,26 @@ class PostService {
         },
       });
       return comments;
+    } catch (error) {
+      throw error;
+    }
+  }
+
+  async getAPostDetails(postId: number) {
+    try {
+      const post = await prisma.post.findUnique({
+        where: {
+          id: postId,
+        },
+        include: {
+          comments: true,
+        },
+      });
+
+      if (!post) {
+        throw new EntityNotFoundError("post does not exists");
+      }
+      return post;
     } catch (error) {
       throw error;
     }

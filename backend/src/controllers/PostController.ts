@@ -43,3 +43,29 @@ export const getAllCommentsOfAPost = async (
     next(error);
   }
 };
+
+
+
+export const getAPost = async (
+    req: Request,
+    res: Response,
+    next: NextFunction
+  ) => {
+    try {
+      const postId = req.params.id;
+      if (!postId) {
+        res.status(StatusCodes.BAD_REQUEST).json({
+          error: "postId is required",
+        });
+        return;
+      }
+  
+      const response = await postService.getAPostDetails(Number(postId))
+      res.status(StatusCodes.OK).json({
+        ok: true,
+        response,
+      });
+    } catch (error) {
+      next(error);
+    }
+  };
