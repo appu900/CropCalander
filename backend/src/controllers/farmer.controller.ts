@@ -234,3 +234,50 @@ export const getAllCropCalendarsOfFarmer = async (
     next(error);
   }
 };
+
+// **make a  post for social media feed
+
+export const makeAPost = async (
+  req: AuthenticatedRequest,
+  res: Response,
+  next: NextFunction
+) => {
+  try {
+    const userId = req.userId;
+    const postContent = req.body.content;
+    if (postContent.length < 10) {
+      res.status(StatusCodes.BAD_REQUEST).json({
+        ok: false,
+        error: "the caption should be atlest 10 character",
+      });
+    }
+    if (!userId) {
+      res.status(StatusCodes.UNAUTHORIZED).json({
+        ok: false,
+        error: "unauthotized attempt",
+      });
+      return;
+    }
+    let fileUrl = "";
+    if (req.file) {
+      const fileName = `${Date.now()}-${req.file.originalname}`;
+      let optimizedBuffer: Buffer | null = await sharp(req.file.buffer)
+        .resize(1024)
+        .toBuffer();
+      fileUrl = await uploadToS3(optimizedBuffer, fileName, req.file.mimetype);
+    }
+
+    const response = await farmerService.createPost(
+      postContent,
+      fileUrl,
+      userId
+    );
+
+    res.status(StatusCodes.CREATED).json({
+      ok: true,
+      response,
+    });
+  } catch (error) {
+    next(error);
+  }
+};

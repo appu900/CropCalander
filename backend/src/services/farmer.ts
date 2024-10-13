@@ -34,7 +34,9 @@ class FarmerService {
           email: data.email,
           password: hashedPassword,
           phoneNumber: data.phoneNumber,
-          profilePic:data.profilePic ? data.profilePic : "https://avatar.iran.liara.run/public/23"
+          profilePic: data.profilePic
+            ? data.profilePic
+            : "https://avatar.iran.liara.run/public/23",
         },
       });
       const jwtToken = generateToken(farmer.id);
@@ -43,8 +45,8 @@ class FarmerService {
         email: farmer.email,
         phoneNumber: farmer.phoneNumber,
         token: jwtToken,
-        role:farmer.role,
-        profilePic:farmer.profilePic
+        role: farmer.role,
+        profilePic: farmer.profilePic,
       };
     } catch (error) {
       throw error;
@@ -74,8 +76,8 @@ class FarmerService {
         email: farmer.email,
         phoneNumber: farmer.phoneNumber,
         token: jwtToken,
-        role:farmer.role,
-        profilePic:farmer.profilePic
+        role: farmer.role,
+        profilePic: farmer.profilePic,
       };
     } catch (error) {
       throw error;
@@ -159,16 +161,30 @@ class FarmerService {
       throw error;
     }
   }
+
+  // ** Farmer will make a post.
+
+  async createPost(postContent: string, imageUrl: string, farmerId: number) {
+    try {
+      const post = await prisma.post.create({
+        data: {
+          content: postContent,
+          image: imageUrl,
+          farmerId: farmerId,
+          postedByType: "FARMER",
+        },
+      });
+      return post;
+    } catch (error) {
+      throw error;
+    }
+  }
 }
 
 export default FarmerService;
 
-
-
-
-
-// ** farmer can make a post 
+// ** farmer can make a post
 // ** post will contain title description
 // ** profile picture
 // ** role based authetication .
-// ** Agri expert will just 
+// ** Agri expert will just

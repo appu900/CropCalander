@@ -1,6 +1,6 @@
 
 import express from 'express';
-import { addActivityToFarmerCropCalendar, createFarmer, createOwnCropCalendar, farmerLogin, getAllCropCalendarRequestForFarmer, handleAllCompletedCropcalendarRequest } from '../controllers/farmer.controller';
+import { addActivityToFarmerCropCalendar, createFarmer, createOwnCropCalendar, farmerLogin, getAllCropCalendarRequestForFarmer, handleAllCompletedCropcalendarRequest, makeAPost } from '../controllers/farmer.controller';
 
 import { CreateFarmerDTO, FarmerCropCalendarActivityDTO, FarmerCropCalendarCreationDTO, FarmerLoginDTO } from '../dtos/farmer.dto';
 import { validateDTO } from '../middleware/validate.dto';
@@ -18,5 +18,10 @@ router.get("/farmer/ccr/completed",authMiddleware,handleAllCompletedCropcalendar
 router.post("/farmer/cropcalendar",authMiddleware,validateDTO(FarmerCropCalendarCreationDTO),createOwnCropCalendar)
 router.post("/farmer/cropcalendar/:id",authMiddleware,validateDTO(FarmerCropCalendarActivityDTO),addActivityToFarmerCropCalendar)
 router.get("/farmer/cropcalendar/all",authMiddleware,getAllCropCalendarRequestForFarmer)
+
+
+// ** social media endpoint
+
+router.post("/farmer/posts/create",uploadSingleImage,authMiddleware,makeAPost)
 
 export default router;  

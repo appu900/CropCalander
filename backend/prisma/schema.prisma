@@ -27,22 +27,27 @@ model Farmer {
   posts               Post[]
 }
 
+
+
 model Post {
-  id       Int       @id @default(autoincrement())
-  title    String
-  image    String?
-  postedBy Int
-  farmer   Farmer    @relation(fields: [postedBy], references: [id])
-  comments Comment[]
+  id                 Int         @id @default(autoincrement())
+  content             String
+  image              String?
+  postedByType       UserType
+  farmerId     Int?
+  agriExpertId Int?
+  farmer             Farmer?     @relation(fields: [farmerId], references: [id])
+  agriExpert         AgriExpert? @relation(fields: [agriExpertId], references: [id])
+  comments           Comment[]
 }
 
 model Comment {
-  id           Int        @id @default(autoincrement())
-  content      String
-  postId       Int
-  post         Post       @relation(fields: [postId], references: [id])
-  agriexpertId Int
-  agriexpert   AgriExpert @relation(fields: [agriexpertId], references: [id])
+  id          Int        @id @default(autoincrement())
+  content     String
+  postId      Int
+  post        Post       @relation(fields: [postId], references: [id])
+  commentedBy Int
+  agriexpert  AgriExpert @relation(fields: [commentedBy], references: [id])
 }
 
 model FarmerCropCalendar {
@@ -84,6 +89,7 @@ model AgriExpert {
   address              String?
   profilePic           String?
   comments             Comment[]
+  Posts                Post[]
 }
 
 model CropCalandarRequest {
@@ -138,4 +144,9 @@ enum RequestStatus {
   PENDING
   ACCEPTED
   COMPLETED
+}
+
+enum UserType {
+  FARMER
+  AGRI_EXPERT
 }
