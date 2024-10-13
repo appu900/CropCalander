@@ -39,7 +39,7 @@ class FarmerService {
             : "https://avatar.iran.liara.run/public/23",
         },
       });
-      const jwtToken = generateToken(farmer.id);
+      const jwtToken = generateToken(farmer.id,farmer.role);
       return {
         name: farmer.name,
         email: farmer.email,
@@ -70,7 +70,7 @@ class FarmerService {
         throw new userAutheticationError("Invalid Password");
       }
 
-      const jwtToken = generateToken(farmer.id);
+      const jwtToken = generateToken(farmer.id,farmer.role);
       return {
         name: farmer.name,
         email: farmer.email,

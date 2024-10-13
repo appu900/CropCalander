@@ -25,7 +25,6 @@ model Farmer {
   cropsRequests       CropCalandarRequest[]
   farmerCropCalandars FarmerCropCalendar[]
   posts               Post[]
-  comments            Comment[]
   likes               Like[]
 }
 
@@ -38,32 +37,32 @@ model Post {
   agriExpertId Int?
   farmer       Farmer?     @relation(fields: [farmerId], references: [id])
   agriExpert   AgriExpert? @relation(fields: [agriExpertId], references: [id])
+  likeCount    Int         @default(0)
   comments     Comment[]
-  likes Like[]
+  likes        Like[]
 }
-  
+
 model Comment {
   id           Int         @id @default(autoincrement())
   content      String
   postId       Int
   post         Post        @relation(fields: [postId], references: [id])
-  userType     UserType
-  farmerId     Int?
-  agriExpertId Int?
+  agriExpertId Int
   agriexpert   AgriExpert? @relation(fields: [agriExpertId], references: [id])
-  farmer       Farmer?     @relation(fields: [farmerId], references: [id])
 }
 
-model Like{
-  id Int @id @default(autoincrement())
-  postId Int
-  post Post @relation(fields: [postId],references: [id])
-  userType UserType
+model Like {
+  id           Int         @id @default(autoincrement())
+  postId       Int
+  post         Post        @relation(fields: [postId], references: [id])
+  userType     UserType
   agriExpertId Int?
-  farmerId Int?
-  farmer Farmer? @relation(fields: [farmerId], references: [id])
-  agriExpert AgriExpert? @relation(fields: [agriExpertId], references: [id])
+  farmerId     Int?
+  farmer       Farmer?     @relation(fields: [farmerId], references: [id])
+  agriExpert   AgriExpert? @relation(fields: [agriExpertId], references: [id])
 
+  @@unique([postId, farmerId])
+  @@unique([postId, agriExpertId])
 }
 
 model FarmerCropCalendar {

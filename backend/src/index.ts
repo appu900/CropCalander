@@ -5,6 +5,7 @@ import { checkDatabaseConnection } from "./config/db.config";
 import { errorHandler } from "./middleware/errorhandler";
 import farmerRoutes from "./routes/farmer.route"
 import AgriexpertRoutes from "./routes/Agriexpert.route"
+import LikeRoutes from "./routes/likeRoutes"
 import CropCalanderRequestRoutes from "./routes/CropcalanderRequest"
 import { authMiddleware,AuthenticatedRequest } from "./middleware/authenticationMiddleware";
 import { Request,Response,NextFunction } from "express";
@@ -23,7 +24,9 @@ async function startServer() {
   // ** HTTP routes for access
   app.use("/api",farmerRoutes)
   app.use("/api",AgriexpertRoutes)
+  app.use("/api",LikeRoutes)
   app.use("/api/ccr",CropCalanderRequestRoutes)
+
 
 
   app.get("/ping",authMiddleware,async (req:Request,res:Response)=>{

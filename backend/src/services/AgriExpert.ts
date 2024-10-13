@@ -42,12 +42,12 @@ class AgriExpertService {
           profilePic: requestData.profilePic,
         },
       });
-      const jwtToken = generateToken(newAgriExpert.id);
+      const jwtToken = generateToken(newAgriExpert.id,newAgriExpert.role);
       return {
         id: newAgriExpert.id,
         name: newAgriExpert.name,
         token: jwtToken,
-        profilePic: newAgriExpert.profilePic
+        profilePic: newAgriExpert.profilePic,
       };
     } catch (error) {
       throw error;
@@ -77,12 +77,12 @@ class AgriExpertService {
       if (!correctPassword) {
         throw new userAutheticationError("Invalid Password");
       }
-      const jwtToken = generateToken(agriExpert.id);
+      const jwtToken = generateToken(agriExpert.id,agriExpert.role);
       return {
         id: agriExpert.id,
         name: agriExpert.name,
         token: jwtToken,
-        profilePic:agriExpert.profilePic
+        profilePic: agriExpert.profilePic,
       };
     } catch (error) {
       throw error;
@@ -166,6 +166,22 @@ class AgriExpertService {
         },
       });
       return post;
+    } catch (error) {
+      throw error;
+    }
+  }
+
+  // ** make a comment on a post
+  async makeAComment(postId: number, userId: number, content: string) {
+    try {
+      const response = await prisma.comment.create({
+        data: {
+          content: content,
+          agriExpertId: userId,
+          postId: postId,
+        },
+      });
+      return response;
     } catch (error) {
       throw error;
     }

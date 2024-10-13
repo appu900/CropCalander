@@ -1,5 +1,5 @@
 import express from 'express';
-import { acceptAgriExpertRequest, craeteAPost, create, getAllRequestByAgriexpert, login } from '../controllers/AgriExpert.controller';
+import { acceptAgriExpertRequest, craeteAPost, create, getAllRequestByAgriexpert, login, makeAComment } from '../controllers/AgriExpert.controller';
 import { AgriExpertLoginRequestDTO, AgriExpertRequestDto } from '../dtos/Agriexpert.dto';
 import { validateDTO } from '../middleware/validate.dto';
 import { authMiddleware } from '../middleware/authenticationMiddleware';
@@ -24,6 +24,7 @@ router.put("/expert/ccr/:cropCalendarId",authMiddleware,handlechangeStatusToComp
 // ** feed routes 
 
 router.post("/expert/post/create",uploadSingleImage,authMiddleware,craeteAPost)
+router.post("/expert/comment/post/:id",authMiddleware,makeAComment)
 
 export default router;
 

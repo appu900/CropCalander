@@ -21,6 +21,8 @@ export const create = async (
 ) => {
   try {
     const payload = req.body;
+
+    // ** Data validation
     const validatePayload = agriExpertValidationSchema.parse(payload);
     let fileUrl = "";
     if (req.file) {
@@ -191,3 +193,34 @@ export const craeteAPost = async (
     next(error);
   }
 };
+
+
+export const makeAComment = async(req:AuthenticatedRequest,res:Response,next:NextFunction) =>{
+  try {
+     const userId = req.userId;
+     if(!userId){
+      res.status(StatusCodes.UNAUTHORIZED).json({
+        ok:false,
+        error:"unauthorized attempt"
+      })
+      return;
+     }
+
+     const content = req.body.content;
+     const postId = req.params.id
+     if(!postId){
+      res.status(StatusCodes.UNAUTHORIZED).json({
+        ok:false,
+        error:"post id is required"
+      })
+      return
+     }
+     const response = await agriExpertService.makeAComment(Number(postId),userId,content)
+     res.status(StatusCodes.CREATED).json({
+      ok:true,
+      response
+     })
+  } catch (error) {
+     next(error)
+  }
+}

@@ -4,6 +4,7 @@ import jwt, { JwtPayload } from "jsonwebtoken";
 
 export interface AuthenticatedRequest extends Request {
   userId?: number;
+  role?: string;
 }
 
 export const authMiddleware = (
@@ -33,7 +34,8 @@ export const authMiddleware = (
 
     // Add userId to the request object
 
-    (req as AuthenticatedRequest).userId = Number(decodedToken.userId); // Assuming userId is part of the token payload
+    (req as AuthenticatedRequest).userId = Number(decodedToken.userId);
+    (req as AuthenticatedRequest).role = decodedToken.role; // Assuming userId is part of the token payload
     next();
   } catch (error) {
     res.status(StatusCodes.UNAUTHORIZED).json({
