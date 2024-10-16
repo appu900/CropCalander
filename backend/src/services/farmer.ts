@@ -5,6 +5,7 @@ import {
   FarmerCropCalendarCreationDTO,
   FarmerLoginDTO,
   FarmerResponseDTO,
+  UpdateFarmerDTO,
 } from "../dtos/farmer.dto";
 import { checkPassword, encryptPassword } from "../utils/encrypt.utils";
 import {
@@ -84,6 +85,46 @@ class FarmerService {
         token: jwtToken,
         role: farmer.role,
         profilePic: farmer.profilePic,
+      };
+    } catch (error) {
+      throw error;
+    }
+  }
+
+  async updateFarmer(farmerId: number, data: UpdateFarmerDTO): Promise<FarmerResponseDTO> {
+    try {
+      const existingFarmer = await prisma.farmer.findUnique({
+        where: { id: farmerId },
+      });
+      if (!existingFarmer) {
+        throw new EntityNotFoundError("Farmer not found");
+      }
+
+      let hashedPassword: string | undefined;
+      if (data.password) {
+        hashedPassword = encryptPassword(data.password);
+      }
+
+      const updatedFarmer = await prisma.farmer.update({
+        where: { id: farmerId },
+        data: {
+          name: data.name ?? existingFarmer.name,
+          email: data.email ?? existingFarmer.email,
+          password: hashedPassword ?? existingFarmer.password,
+          phoneNumber: data.phoneNumber ?? existingFarmer.phoneNumber,
+          profilePic: data.profilePic ?? existingFarmer.profilePic,
+        },
+      });
+
+      const jwtToken = generateToken(updatedFarmer.id, updatedFarmer.role);
+
+      return {
+        name: updatedFarmer.name,
+        email: updatedFarmer.email,
+        phoneNumber: updatedFarmer.phoneNumber,
+        token: jwtToken,
+        role: updatedFarmer.role,
+        profilePic: updatedFarmer.profilePic,
       };
     } catch (error) {
       throw error;

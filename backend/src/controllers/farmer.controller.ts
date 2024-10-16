@@ -7,6 +7,7 @@ import {
   FarmerCropCalendarCreationDTO,
   FarmerLoginDTO,
   FarmerResponseDTO,
+  UpdateFarmerDTO,
 } from "../dtos/farmer.dto";
 import FarmerService from "../services/farmer";
 import { CustomError } from "../utils/application.errors";
@@ -100,6 +101,58 @@ export async function farmerLogin(
     next(error);
   }
 }
+
+export const updateFarmer = async (
+  req: AuthenticatedRequest,
+  res: Response,
+  next: NextFunction
+): Promise<void> => { // Ensure this returns a Promise<void>
+  try {
+    const farmerId: number | undefined = req.userId;
+    // console.log(farmerId);
+    if (!farmerId) {
+      res.status(StatusCodes.UNAUTHORIZED).json({
+        ok: false,
+        message: "Unauthorized, no token provided",
+      });
+      return; // Exit early if unauthorized
+    }
+
+    // Initialize update payload with the existing request body
+    const updatePayload: UpdateFarmerDTO = req.body;
+    console.log(req.file);
+
+    // Check if there's an uploaded file
+    if (req.file) {
+      // Process the image
+      const optimizedBuffer = await sharp(req.file.buffer)
+        .resize(1024) // Adjust size as needed
+        .toBuffer();
+
+      // Generate a unique filename for the image
+      const fileName = `${Date.now()}-${req.file.originalname}`;
+
+      // Upload to S3 and get the file URL
+      const fileUrl = await uploadToS3(optimizedBuffer, fileName, req.file.mimetype);
+
+      // Add the image URL to the update payload
+
+      console.log(fileUrl)
+      updatePayload.profilePic = fileUrl; 
+    }
+
+    // Update farmer details in the database
+    const response = await farmerService.updateFarmer(farmerId, updatePayload);
+
+    // Return the updated farmer information
+    res.status(StatusCodes.OK).json({
+      ok: true,
+      response,
+    });
+  } catch (error) {
+    next(error); // Ensure error is passed to the error handling middleware
+  }
+};
 
 export const getAllCropCalendarRequestForFarmer = async (
   req: AuthenticatedRequest,

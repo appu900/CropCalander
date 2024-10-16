@@ -1,6 +1,6 @@
 
 import express from 'express';
-import { addActivityToFarmerCropCalendar, createDigitalSoilHealthForm, createDroneSprayingnForm, createFarmer, createOwnCropCalendar, createSmartIrrigationForm, farmerLogin, getAllCropCalendarRequestForFarmer, handleAllCompletedCropcalendarRequest, makeAPost, makeApostViaActivity } from '../controllers/farmer.controller';
+import { addActivityToFarmerCropCalendar, createDigitalSoilHealthForm, createDroneSprayingnForm, createFarmer, createOwnCropCalendar, createSmartIrrigationForm, farmerLogin, getAllCropCalendarRequestForFarmer, handleAllCompletedCropcalendarRequest, makeAPost, makeApostViaActivity, updateFarmer } from '../controllers/farmer.controller';
 
 import { CreateFarmerDTO, FarmerCropCalendarActivityDTO, FarmerCropCalendarCreationDTO, FarmerLoginDTO } from '../dtos/farmer.dto';
 import { validateDTO } from '../middleware/validate.dto';
@@ -12,6 +12,9 @@ const router = express.Router();
 
 router.post('/farmer',uploadSingleImage,createFarmer);
 router.post('/farmer/login',validateDTO(FarmerLoginDTO),farmerLogin)
+router.put('/farmer/update',  uploadSingleImage, authMiddleware,updateFarmer);
+
+
 router.get('/farmer/ccr',authMiddleware,getAllCropCalendarRequestForFarmer)
 router.get("/farmer/ccr/completed",authMiddleware,handleAllCompletedCropcalendarRequest)
 

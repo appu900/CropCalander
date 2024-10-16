@@ -107,3 +107,28 @@ export class FarmerCropCalendarActivityDTO {
   @IsNotEmpty()
   description!: string;
 }
+
+
+export class UpdateFarmerDTO {
+  @IsString()
+  @IsOptional()
+  name?: string;
+
+  @IsEmail()
+  @IsOptional()
+  email?: string;
+
+  @IsString()
+  @MinLength(4, { message: "Password must be at least 4 characters long" })
+  @IsOptional()
+  password?: string;
+
+  @IsString()
+  @MinLength(10, { message: "Phone Number must be 10 characters long" })
+  @MaxLength(10, { message: "Phone Number must be 10 characters long" })
+  @IsOptional()
+  phoneNumber?: string;
+
+  @IsOptional()
+  profilePic?: string;
+}
