@@ -284,5 +284,46 @@ export const makeAPost = async (
 
 
 
+export const makeApostViaActivity = async (req:AuthenticatedRequest,res:Response,next:NextFunction) =>{
+  try {
+    const content = req.body.caption;
+    const activityId = parseInt(req.params.id);
+    const farmerId = req.userId;
+
+    if(!farmerId || !activityId || !content){
+      res.status(StatusCodes.BAD_REQUEST).json({
+        ok:false,
+        error:"invalid request"
+      })
+      return;
+    }
+
+    console.log(content,activityId,farmerId);
+    let fileUrl = "";
+    if (req.file) {
+      const fileName = `${Date.now()}-${req.file.originalname}`;
+      let optimizedBuffer: Buffer | null = await sharp(req.file.buffer)
+        .resize(1024)
+        .toBuffer();
+      fileUrl = await uploadToS3(
+        optimizedBuffer,
+        fileName,
+        req.file.mimetype
+      );
+      optimizedBuffer = null;
+    }
+      
+    
+
+    const response = await farmerService.updateImageToActivity(fileUrl,content,activityId,Number(farmerId));
+    res.status(StatusCodes.CREATED).json({
+      ok:true,
+      response
+    })
+  } catch (error) {
+     next(error)
+  }
+}
+
 
 

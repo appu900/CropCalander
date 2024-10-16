@@ -71,7 +71,6 @@ model SoilHealthMapForm {
   createdAt      DateTime @default(now())
 }
 
-
 model DroneSprayingFrom {
   id             Int      @id @default(autoincrement())
   farmerId       Int
@@ -146,6 +145,7 @@ model FarmerCropCalendarActivity {
   endTime              String
   description          String?
   image                String?
+  caption              String?
 }
 
 model AgriExpert {

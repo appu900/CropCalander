@@ -37,10 +37,10 @@ class FarmerService {
           profilePic: data.profilePic
             ? data.profilePic
             : "https://avatar.iran.liara.run/public/23",
-          address:data.address  
+          address: data.address,
         },
       });
-      const jwtToken = generateToken(farmer.id,farmer.role);
+      const jwtToken = generateToken(farmer.id, farmer.role);
       return {
         name: farmer.name,
         email: farmer.email,
@@ -71,7 +71,7 @@ class FarmerService {
         throw new userAutheticationError("Invalid Password");
       }
 
-      const jwtToken = generateToken(farmer.id,farmer.role);
+      const jwtToken = generateToken(farmer.id, farmer.role);
       return {
         name: farmer.name,
         email: farmer.email,
@@ -176,6 +176,42 @@ class FarmerService {
         },
       });
       return post;
+    } catch (error) {
+      throw error;
+    }
+  }
+
+  async updateImageToActivity(
+    imageUrl: string,
+    caption: string,
+    activityId: number,
+    farmerId: number
+  ) {
+    try {
+      const response = await prisma.$transaction([
+        prisma.farmerCropCalendarActivity.update({
+          where: {
+            id: activityId,
+          },
+          data: {
+            image: imageUrl,
+            caption: caption,
+          },
+        }),
+
+        prisma.post.create({
+          data: {
+            content: caption,
+            image: imageUrl,
+            farmerId: farmerId,
+            postedByType: "FARMER",
+          },
+        }),
+      ]);
+      return{
+        activity: response[0],
+        post: response[1]
+      };
     } catch (error) {
       throw error;
     }
