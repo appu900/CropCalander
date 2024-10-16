@@ -32,6 +32,10 @@ export class CreateFarmerDTO {
   @MaxLength(10, { message: "Phone Number must be 10 characters long" })
   phoneNumber!: string;
 
+  @IsString()
+  @IsNotEmpty()
+  address!:string
+
   @IsOptional()
   profilePic?:string
 }

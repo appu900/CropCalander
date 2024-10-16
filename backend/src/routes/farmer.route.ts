@@ -22,6 +22,6 @@ router.get("/farmer/cropcalendar/all",authMiddleware,getAllCropCalendarRequestFo
 
 // ** social media endpoint
 
-router.post("  ",uploadSingleImage,authMiddleware,makeAPost)
+router.post("/farmer/posts/create",uploadSingleImage,authMiddleware,makeAPost)
 
 export default router;  

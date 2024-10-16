@@ -26,6 +26,62 @@ model Farmer {
   farmerCropCalandars FarmerCropCalendar[]
   posts               Post[]
   likes               Like[]
+  digitalSoilHealth   SmartIrrigationForm[]
+  soilHealthMap       SoilHealthMapForm[]
+  DroneSprayingFrom   DroneSprayingFrom[]
+}
+
+enum IrrigationType {
+  DRIP
+  SPRINKLER
+  SURFACE
+  SUBSURFACE
+}
+
+model SmartIrrigationForm {
+  id             Int            @id @default(autoincrement())
+  farmerId       Int
+  farmer         Farmer         @relation(fields: [farmerId], references: [id])
+  irrigationType IrrigationType
+  farmLoaction   String
+  cropType       String
+  areaInHectares Float
+  query          String
+  createdAt      DateTime       @default(now())
+}
+
+enum SoilType {
+  LOAM
+  CLAY
+  SANDY
+  SILT
+  PEAT
+  CHALK
+}
+
+model SoilHealthMapForm {
+  id             Int      @id @default(autoincrement())
+  farmerId       Int
+  farmer         Farmer   @relation(fields: [farmerId], references: [id])
+  farmLoaction   String
+  soilType       SoilType
+  cropType       String
+  areaInHectares Float
+  query          String
+  createdAt      DateTime @default(now())
+}
+
+
+model DroneSprayingFrom {
+  id             Int      @id @default(autoincrement())
+  farmerId       Int
+  farmer         Farmer   @relation(fields: [farmerId], references: [id])
+  farmLoaction   String
+  cropType       String
+  areaInHectares Float
+  sprayDate      DateTime
+  query          String
+  createdAt      DateTime @default(now())
 }
 
 model Post {

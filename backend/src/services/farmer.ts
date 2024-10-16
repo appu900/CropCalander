@@ -37,6 +37,7 @@ class FarmerService {
           profilePic: data.profilePic
             ? data.profilePic
             : "https://avatar.iran.liara.run/public/23",
+          address:data.address  
         },
       });
       const jwtToken = generateToken(farmer.id,farmer.role);
