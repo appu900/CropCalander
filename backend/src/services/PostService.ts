@@ -7,6 +7,12 @@ class PostService {
       const posts = await prisma.post.findMany({
         include: {
           comments: true,
+          farmer:{
+            select:{
+              name:true,
+              address:true
+            }
+          }
         },
       });
       return posts;
