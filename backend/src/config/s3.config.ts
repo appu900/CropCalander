@@ -27,5 +27,5 @@ export const uploadToS3 = async (
   } catch (error) {
     console.log("error in uploading file to s3", error);
     throw new Error("failed to upload image to s3");
-  }
+  }  
 };

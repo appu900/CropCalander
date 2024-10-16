@@ -13,6 +13,11 @@ import {
   userAutheticationError,
 } from "../utils/application.errors";
 import { generateToken } from "../utils/token.utils";
+import {
+  DroneSprayingFormDTO,
+  SmartIrrigationFormDto,
+  SoilHealthMapFormDto,
+} from "../dtos/ServiceForms.dto";
 
 class FarmerService {
   async createFarmer(data: CreateFarmerDTO): Promise<FarmerResponseDTO> {
@@ -208,10 +213,70 @@ class FarmerService {
           },
         }),
       ]);
-      return{
+      return {
         activity: response[0],
-        post: response[1]
+        post: response[1],
       };
+    } catch (error) {
+      throw error;
+    }
+  }
+
+  // ** create a drone spraying form
+  async createDroneSprayingForm(farmerId: number, data: DroneSprayingFormDTO) {
+    try {
+      const response = await prisma.droneSprayingFrom.create({
+        data: {
+          farmerId: farmerId,
+          farmLoaction: data.farmLocation,
+          cropType: data.cropType,
+          areaInHectares: data.areaInHectares,
+          sprayDate: data.sprayDate,
+          query: data.query ?? "No query provided",
+        },
+      });
+      return response;
+    } catch (error) {
+      throw error;
+    }
+  }
+
+  async createSmartIrrigationFrom(
+    farmerId: number,
+    data: SmartIrrigationFormDto
+  ) {
+    try {
+      const response = await prisma.smartIrrigationForm.create({
+        data: {
+          farmerId: farmerId,
+          farmLoaction: data.farmLocation,
+          cropType: data.cropType,
+          areaInHectares: data.areaInHectares,
+          query: data.query ?? "No query provided",
+          irrigationType: data.irrigationType,
+        },
+      });
+      return response;
+    } catch (error) {
+      throw error;
+    }
+  }
+
+  // ** create a soil health map form
+
+  async createSoilHealthMapForm(farmerId: number, data: SoilHealthMapFormDto) {
+    try {
+      const response = await prisma.soilHealthMapForm.create({
+        data: {
+          farmerId: farmerId,
+          farmLoaction: data.farmLocation,
+          soilType: data.soilType,
+          cropType: data.cropType,
+          areaInHectares: data.areaInHectares,
+          query: data.query ?? "No query provided",
+        },
+      });
+      return response;
     } catch (error) {
       throw error;
     }

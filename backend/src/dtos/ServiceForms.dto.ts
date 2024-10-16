@@ -36,7 +36,7 @@ export class SoilHealthMapFormDto {
 
 export class SmartIrrigationFormDto {
   @IsNotEmpty()
-  irrigationType!: string;
+  irrigationType!: "DRIP" | "SPRINKLER" | "SURFACE" | "SUBSURFACE";
 
   @IsNotEmpty()
   farmLocation!: string;

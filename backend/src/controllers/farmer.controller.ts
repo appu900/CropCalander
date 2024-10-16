@@ -16,6 +16,7 @@ import multer from "multer";
 import sharp from "sharp";
 import { uploadToS3 } from "../config/s3.config";
 import { createFarmerSchema } from "../validation/createFarmerValidaton";
+import { DroneSprayingFormDTO, SmartIrrigationFormDto, SoilHealthMapFormDto } from "../dtos/ServiceForms.dto";
 const farmerService = new FarmerService();
 const cropCalendarRequestService = new CropCalanderRequestService();
 
@@ -326,4 +327,68 @@ export const makeApostViaActivity = async (req:AuthenticatedRequest,res:Response
 }
 
 
+
+export const createSmartIrrigationForm = async(req:AuthenticatedRequest,res:Response,next:NextFunction) =>{
+  try {
+    const farmerId = req.userId;
+    if(!farmerId){
+      res.status(StatusCodes.BAD_REQUEST).json({
+        ok:false,
+        error:"Unauthorized request"
+      })
+      return;
+    }
+    const payload:SmartIrrigationFormDto = req.body;
+    const response = await farmerService.createSmartIrrigationFrom(Number(farmerId),payload);
+    res.status(StatusCodes.CREATED).json({
+      ok:true,
+      response
+    })
+  } catch (error) {
+    next(error)
+  }
+}
+
+export const createDroneSprayingnForm = async(req:AuthenticatedRequest,res:Response,next:NextFunction) =>{
+  try {
+    const farmerId = req.userId;
+    if(!farmerId){
+      res.status(StatusCodes.BAD_REQUEST).json({
+        ok:false,
+        error:"Unauthorized request"
+      })
+      return;
+    }
+    const payload:DroneSprayingFormDTO = req.body;
+    const response = await farmerService.createDroneSprayingForm(Number(farmerId),payload);
+    res.status(StatusCodes.CREATED).json({
+      ok:true,
+      response
+    })
+  } catch (error) {
+    next(error)
+  }
+}
+
+
+export const createDigitalSoilHealthForm = async(req:AuthenticatedRequest,res:Response,next:NextFunction) =>{
+  try {
+    const farmerId = req.userId;
+    if(!farmerId){
+      res.status(StatusCodes.BAD_REQUEST).json({
+        ok:false,
+        error:"Unauthorized request"
+      })
+      return;
+    }
+    const payload:SoilHealthMapFormDto = req.body;
+    const response = await farmerService.createSoilHealthMapForm(Number(farmerId),payload);
+    res.status(StatusCodes.CREATED).json({
+      ok:true,
+      response
+    })
+  } catch (error) {
+    next(error)
+  }
+}
 

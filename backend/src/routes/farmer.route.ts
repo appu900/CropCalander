@@ -1,11 +1,12 @@
 
 import express from 'express';
-import { addActivityToFarmerCropCalendar, createFarmer, createOwnCropCalendar, farmerLogin, getAllCropCalendarRequestForFarmer, handleAllCompletedCropcalendarRequest, makeAPost, makeApostViaActivity } from '../controllers/farmer.controller';
+import { addActivityToFarmerCropCalendar, createDigitalSoilHealthForm, createDroneSprayingnForm, createFarmer, createOwnCropCalendar, createSmartIrrigationForm, farmerLogin, getAllCropCalendarRequestForFarmer, handleAllCompletedCropcalendarRequest, makeAPost, makeApostViaActivity } from '../controllers/farmer.controller';
 
 import { CreateFarmerDTO, FarmerCropCalendarActivityDTO, FarmerCropCalendarCreationDTO, FarmerLoginDTO } from '../dtos/farmer.dto';
 import { validateDTO } from '../middleware/validate.dto';
 import { authMiddleware } from '../middleware/authenticationMiddleware';  
 import { uploadSingleImage } from '../middleware/multerUpload.Middleware';
+import { DroneSprayingFormDTO, SmartIrrigationFormDto, SoilHealthMapFormDto } from '../dtos/ServiceForms.dto';
 
 const router = express.Router();
 
@@ -24,5 +25,12 @@ router.get("/farmer/cropcalendar/all",authMiddleware,getAllCropCalendarRequestFo
 
 router.post("/farmer/posts/create",uploadSingleImage,authMiddleware,makeAPost)
 router.put("/farmer/activity/add/:id",uploadSingleImage,authMiddleware,makeApostViaActivity)
+
+
+// ** form request
+
+router.post("/farmer/service/drone-spraying",validateDTO(DroneSprayingFormDTO),authMiddleware,createDroneSprayingnForm)
+router.post("/farmer/service/smart-irrigation",validateDTO(SmartIrrigationFormDto),authMiddleware,createSmartIrrigationForm)
+router.post("/farmer/service/soil-health-map",validateDTO(SoilHealthMapFormDto),authMiddleware,createDigitalSoilHealthForm)
 
 export default router;  
