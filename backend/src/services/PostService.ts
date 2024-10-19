@@ -10,7 +10,8 @@ class PostService {
           farmer:{
             select:{
               name:true,
-              address:true
+              address:true,
+              profilePic:true,
             }
           }
         },
