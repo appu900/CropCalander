@@ -1,4 +1,5 @@
 
+import 'dotenv/config';
 import express from "express";
 import { prisma } from "./prisma/client";
 import { checkDatabaseConnection } from "./config/db.config";
