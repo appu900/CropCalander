@@ -14,6 +14,12 @@ export class DuplicatePhoneNumberError extends CustomError {
   }
 }
 
+export class DuplicateEntityError extends CustomError {
+  constructor(message: string = "entity already exits") {
+    super(message, 409);
+  }
+}
+
 export class DupliccateUserError extends CustomError {
   constructor(message: string = "user already exits") {
     super(message, 409);

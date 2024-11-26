@@ -9,7 +9,7 @@ class CropCelendarService {
   // ** generate crop calendar for a request
   async createCropCalendar(requestId: number, expertId: number) {
     try {
-      const cropCalendar = await prisma.cropCalandar.findFirst({
+      const cropCalendar = await prisma.cropCalendar.findFirst({
         where: {
           requestId: requestId,
         },
@@ -33,7 +33,7 @@ class CropCelendarService {
         createdAt: new Date(),
       };
 
-      const response = await prisma.cropCalandar.create({
+      const response = await prisma.cropCalendar.create({
         data: payload,
       });
       return response;
@@ -49,7 +49,7 @@ class CropCelendarService {
   ) {
     try {
       console.log(cropcalendarActivityPayload);
-      const cropCalendar = await prisma.cropCalandar.findUnique({
+      const cropCalendar = await prisma.cropCalendar.findUnique({
         where: {
           id: cropCalendarId,
         },

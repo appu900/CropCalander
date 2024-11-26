@@ -9,6 +9,7 @@ import {
 } from "../dtos/farmer.dto";
 import { checkPassword, encryptPassword } from "../utils/encrypt.utils";
 import {
+  DuplicateEntityError,
   DuplicatePhoneNumberError,
   EntityNotFoundError,
   userAutheticationError,
@@ -29,15 +30,17 @@ class FarmerService {
           phoneNumber: data.phoneNumber,
         },
       });
-      if (existingFarmer) {
-        throw new DuplicatePhoneNumberError(
-          "user with Phone Number already exists"
-        );
+      
+      if (existingFarmer){
+        if(existingFarmer.email === data.email){
+          throw new DuplicatePhoneNumberError("Phone Number already exists");
+        }
+        throw new DuplicateEntityError("Farmer already exists with this email");
       }
       const farmer = await prisma.farmer.create({
         data: {
           name: data.name,
-          email: data.email,
+          email: data.email ?? "",
           password: hashedPassword,
           phoneNumber: data.phoneNumber,
           profilePic: data.profilePic
@@ -91,7 +94,10 @@ class FarmerService {
     }
   }
 
-  async updateFarmer(farmerId: number, data: UpdateFarmerDTO): Promise<FarmerResponseDTO> {
+  async updateFarmer(
+    farmerId: number,
+    data: UpdateFarmerDTO
+  ): Promise<FarmerResponseDTO> {
     try {
       const existingFarmer = await prisma.farmer.findUnique({
         where: { id: farmerId },
@@ -318,6 +324,32 @@ class FarmerService {
         },
       });
       return response;
+    } catch (error) {
+      throw error;
+    }
+  }
+
+  // ** delete farmer data from db including all cropcalandar and activities
+
+  async deleteFarmerData(farmerEmail: string, feeedback:string) {
+    try {
+      const farmer = await prisma.farmer.findFirst({
+        where: {
+          email: farmerEmail,
+        },
+      });
+
+      // ** if we dont get any farmer with this email
+      if (!farmer) {
+        throw new EntityNotFoundError("Farmer not found");
+      }
+
+      // ** delete all cropcalandar and activities of this farmer with a prisma transanction
+      // ** delete all posts cropcalander is exists with activity all deatils of a farmer
+      // ** add a new activity data 
+      // ** do all things in a prisma transaction
+
+     
     } catch (error) {
       throw error;
     }

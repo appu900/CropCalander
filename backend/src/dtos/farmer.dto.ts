@@ -8,10 +8,6 @@ import {
   minLength,
 } from "class-validator";
 
-
-
-
-
 export class CreateFarmerDTO {
   @IsString({ message: "Name must be a string" })
   @IsNotEmpty({ message: "Name is required" })
