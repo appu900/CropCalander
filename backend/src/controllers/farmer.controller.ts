@@ -17,7 +17,11 @@ import multer from "multer";
 import sharp from "sharp";
 import { uploadToS3 } from "../config/s3.config";
 import { createFarmerSchema } from "../validation/createFarmerValidaton";
-import { DroneSprayingFormDTO, SmartIrrigationFormDto, SoilHealthMapFormDto } from "../dtos/ServiceForms.dto";
+import {
+  DroneSprayingFormDTO,
+  SmartIrrigationFormDto,
+  SoilHealthMapFormDto,
+} from "../dtos/ServiceForms.dto";
 const farmerService = new FarmerService();
 const cropCalendarRequestService = new CropCalanderRequestService();
 
@@ -106,7 +110,8 @@ export const updateFarmer = async (
   req: AuthenticatedRequest,
   res: Response,
   next: NextFunction
-): Promise<void> => { // Ensure this returns a Promise<void>
+): Promise<void> => {
+  // Ensure this returns a Promise<void>
   try {
     const farmerId: number | undefined = req.userId;
     // console.log(farmerId);
@@ -133,12 +138,16 @@ export const updateFarmer = async (
       const fileName = `${Date.now()}-${req.file.originalname}`;
 
       // Upload to S3 and get the file URL
-      const fileUrl = await uploadToS3(optimizedBuffer, fileName, req.file.mimetype);
+      const fileUrl = await uploadToS3(
+        optimizedBuffer,
+        fileName,
+        req.file.mimetype
+      );
 
       // Add the image URL to the update payload
 
-      console.log(fileUrl)
-      updatePayload.profilePic = fileUrl; 
+      console.log(fileUrl);
+      updatePayload.profilePic = fileUrl;
     }
 
     // Update farmer details in the database
@@ -336,112 +345,167 @@ export const makeAPost = async (
   }
 };
 
-
-
-export const makeApostViaActivity = async (req:AuthenticatedRequest,res:Response,next:NextFunction) =>{
+export const makeApostViaActivity = async (
+  req: AuthenticatedRequest,
+  res: Response,
+  next: NextFunction
+) => {
   try {
     const content = req.body.caption;
     const activityId = parseInt(req.params.id);
     const farmerId = req.userId;
 
-    if(!farmerId || !activityId || !content){
+    if (!farmerId || !activityId || !content) {
       res.status(StatusCodes.BAD_REQUEST).json({
-        ok:false,
-        error:"invalid request"
-      })
+        ok: false,
+        error: "invalid request",
+      });
       return;
     }
 
-    console.log(content,activityId,farmerId);
+    console.log(content, activityId, farmerId);
     let fileUrl = "";
     if (req.file) {
       const fileName = `${Date.now()}-${req.file.originalname}`;
       let optimizedBuffer: Buffer | null = await sharp(req.file.buffer)
         .resize(1024)
         .toBuffer();
-      fileUrl = await uploadToS3(
-        optimizedBuffer,
-        fileName,
-        req.file.mimetype
-      );
+      fileUrl = await uploadToS3(optimizedBuffer, fileName, req.file.mimetype);
       optimizedBuffer = null;
     }
-      
-    
 
-    const response = await farmerService.updateImageToActivity(fileUrl,content,activityId,Number(farmerId));
+    const response = await farmerService.updateImageToActivity(
+      fileUrl,
+      content,
+      activityId,
+      Number(farmerId)
+    );
     res.status(StatusCodes.CREATED).json({
-      ok:true,
-      response
-    })
+      ok: true,
+      response,
+    });
   } catch (error) {
-     next(error)
+    next(error);
   }
-}
+};
 
-
-
-export const createSmartIrrigationForm = async(req:AuthenticatedRequest,res:Response,next:NextFunction) =>{
+export const createSmartIrrigationForm = async (
+  req: AuthenticatedRequest,
+  res: Response,
+  next: NextFunction
+) => {
   try {
     const farmerId = req.userId;
-    if(!farmerId){
+    if (!farmerId) {
       res.status(StatusCodes.BAD_REQUEST).json({
-        ok:false,
-        error:"Unauthorized request"
-      })
+        ok: false,
+        error: "Unauthorized request",
+      });
       return;
     }
-    const payload:SmartIrrigationFormDto = req.body;
-    const response = await farmerService.createSmartIrrigationFrom(Number(farmerId),payload);
+    const payload: SmartIrrigationFormDto = req.body;
+    const response = await farmerService.createSmartIrrigationFrom(
+      Number(farmerId),
+      payload
+    );
     res.status(StatusCodes.CREATED).json({
-      ok:true,
-      response
-    })
+      ok: true,
+      response,
+    });
   } catch (error) {
-    next(error)
+    next(error);
   }
-}
+};
 
-export const createDroneSprayingnForm = async(req:AuthenticatedRequest,res:Response,next:NextFunction) =>{
+export const createDroneSprayingnForm = async (
+  req: AuthenticatedRequest,
+  res: Response,
+  next: NextFunction
+) => {
   try {
     const farmerId = req.userId;
-    if(!farmerId){
+    if (!farmerId) {
       res.status(StatusCodes.BAD_REQUEST).json({
-        ok:false,
-        error:"Unauthorized request"
-      })
+        ok: false,
+        error: "Unauthorized request",
+      });
       return;
     }
-    const payload:DroneSprayingFormDTO = req.body;
-    const response = await farmerService.createDroneSprayingForm(Number(farmerId),payload);
+    const payload: DroneSprayingFormDTO = req.body;
+    const response = await farmerService.createDroneSprayingForm(
+      Number(farmerId),
+      payload
+    );
     res.status(StatusCodes.CREATED).json({
-      ok:true,
-      response
-    })
+      ok: true,
+      response,
+    });
   } catch (error) {
-    next(error)
+    next(error);
   }
-}
+};
 
-
-export const createDigitalSoilHealthForm = async(req:AuthenticatedRequest,res:Response,next:NextFunction) =>{
+export const createDigitalSoilHealthForm = async (
+  req: AuthenticatedRequest,
+  res: Response,
+  next: NextFunction
+) => {
   try {
     const farmerId = req.userId;
-    if(!farmerId){
+    if (!farmerId) {
       res.status(StatusCodes.BAD_REQUEST).json({
-        ok:false,
-        error:"Unauthorized request"
-      })
+        ok: false,
+        error: "Unauthorized request",
+      });
       return;
     }
-    const payload:SoilHealthMapFormDto = req.body;
-    const response = await farmerService.createSoilHealthMapForm(Number(farmerId),payload);
+    const payload: SoilHealthMapFormDto = req.body;
+    const response = await farmerService.createSoilHealthMapForm(
+      Number(farmerId),
+      payload
+    );
     res.status(StatusCodes.CREATED).json({
-      ok:true,
-      response
-    })
+      ok: true,
+      response,
+    });
   } catch (error) {
-    next(error)
+    next(error);
   }
-}
+};
 
+export const deleteFarmeraAccount = async (
+  req: Request,
+  res: Response,
+  next: NextFunction
+) => {
+  try {
+    const farmerPhoneNumber = req.body.phoneNumber;
+    const farmerPassword = req.body.password;
+    const feedback = req.body.feedback ?? "";
+    if (!farmerPhoneNumber || !farmerPassword) {
+      res.status(StatusCodes.BAD_REQUEST).json({
+        ok: false,
+        error: "invalid request",
+      });
+      return;
+    }
+    const response = await farmerService.deleteFarmerData(
+      farmerPhoneNumber,
+      farmerPassword,
+      feedback
+    );
+    res.status(StatusCodes.OK).json({
+      ok: true,
+      message: "account deleted successfully",
+      response,
+    });
+  } catch (error) {
+    if (error instanceof CustomError) {
+      res.status(error.statusCode).json({
+        ok: false,
+        message: error.message,
+      });
+    }
+    next(error);
+  }
+};

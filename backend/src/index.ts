@@ -13,6 +13,7 @@ import { authMiddleware,AuthenticatedRequest } from "./middleware/authentication
 import { Request,Response,NextFunction } from "express";
 import bodyParser from "body-parser";
 import fromData from "express-form-data"
+import cors from "cors"
 
 
 const app = express();
@@ -20,6 +21,7 @@ const app = express();
 async function startServer() {
 
   app.use(express.json());
+  app.use(cors())
   app.use(bodyParser.json())
   app.use(errorHandler)
 

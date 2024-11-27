@@ -22,7 +22,7 @@ export const authMiddleware = (
       return;
     }
 
-    const decodedToken = jwt.verify(token, "hello world") as JwtPayload; // Cast to JwtPayload
+    const decodedToken = jwt.verify(token, "hello world") as JwtPayload;
 
     if (!decodedToken || !decodedToken.userId) {
       res.status(StatusCodes.UNAUTHORIZED).json({

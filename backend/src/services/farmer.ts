@@ -30,9 +30,9 @@ class FarmerService {
           phoneNumber: data.phoneNumber,
         },
       });
-      
-      if (existingFarmer){
-        if(existingFarmer.email === data.email){
+
+      if (existingFarmer) {
+        if (existingFarmer.email === data.email) {
           throw new DuplicatePhoneNumberError("Phone Number already exists");
         }
         throw new DuplicateEntityError("Farmer already exists with this email");
@@ -331,25 +331,52 @@ class FarmerService {
 
   // ** delete farmer data from db including all cropcalandar and activities
 
-  async deleteFarmerData(farmerEmail: string, feeedback:string) {
+  async deleteFarmerData(
+    farmerPhoneNumber: string,
+    providedPassword: string,
+    feeedback: string
+  ) {
     try {
-      const farmer = await prisma.farmer.findFirst({
+      const existingfarmer = await prisma.farmer.findFirst({
         where: {
-          email: farmerEmail,
+          phoneNumber: farmerPhoneNumber,
         },
       });
 
       // ** if we dont get any farmer with this email
-      if (!farmer) {
+      if (!existingfarmer) {
         throw new EntityNotFoundError("Farmer not found");
+      }
+
+      // ** check if password is correct
+      const correctPassword = checkPassword(
+        providedPassword,
+        existingfarmer.password
+      );
+      if (!correctPassword) {
+        throw new userAutheticationError("its not your account");
       }
 
       // ** delete all cropcalandar and activities of this farmer with a prisma transanction
       // ** delete all posts cropcalander is exists with activity all deatils of a farmer
-      // ** add a new activity data 
+      // ** add a new activity data
       // ** do all things in a prisma transaction
 
-     
+      const response = await prisma.$transaction([
+        prisma.farmer.delete({
+          where: {
+            id: existingfarmer.id,
+          },
+        }),
+        prisma.deleteAccountFeedback.create({
+          data: {
+            farmerEmail: existingfarmer.email ?? "No email provided",
+            feedback: feeedback,
+            farmerPhoneNumber: existingfarmer.phoneNumber,
+          },
+        }),
+      ]);
+      return response;
     } catch (error) {
       throw error;
     }
