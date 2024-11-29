@@ -482,6 +482,7 @@ export const deleteFarmeraAccount = async (
     const farmerPhoneNumber = req.body.phoneNumber;
     const farmerPassword = req.body.password;
     const feedback = req.body.feedback ?? "";
+    // console.log(farmerPhoneNumber, farmerPassword, feedback);
     if (!farmerPhoneNumber || !farmerPassword) {
       res.status(StatusCodes.BAD_REQUEST).json({
         ok: false,
