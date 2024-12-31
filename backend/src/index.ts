@@ -32,7 +32,7 @@ async function startServer() {
   app.use("/api/posts", PostRoutes);
   app.use("/api/ccr", CropCalanderRequestRoutes);
 
-  app.get("/", (req, res) => {
+  app.get("/test", (req, res) => {
     res.send("Hello World");
   });
 

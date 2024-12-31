@@ -128,3 +128,9 @@ export class UpdateFarmerDTO {
   @IsOptional()
   profilePic?: string;
 }
+
+
+
+
+
+// ip adress of the server - 
