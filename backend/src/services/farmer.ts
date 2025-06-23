@@ -381,6 +381,14 @@ class FarmerService {
       throw error;
     }
   }
+
+  async getDroneSprayingForms() {
+    return await prisma.droneSprayingFrom.findMany();
+  }
+
+  async getSmartIrrigationForms() {
+    return await prisma.smartIrrigationForm.findMany();
+  }
 }
 
 export default FarmerService;

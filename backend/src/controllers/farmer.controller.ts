@@ -510,3 +510,35 @@ export const deleteFarmeraAccount = async (
     next(error);
   }
 };
+
+export const getDroneSparyingForms = async (
+  req: Request,
+  res: Response,
+  next: NextFunction
+) => {
+  try {
+    const response = await farmerService.getDroneSprayingForms();
+    res.status(StatusCodes.OK).json({
+      ok: true,
+      response,
+    });
+  } catch (error) {
+    next(error);
+  }
+};
+
+export const getSmartIrrigationForms = async (
+  req: Request,
+  res: Response,
+  next: NextFunction
+) => {
+  try {
+    const response = await farmerService.getSmartIrrigationForms();
+    res.status(StatusCodes.OK).json({
+      ok: true,
+      response,
+    });
+  } catch (error) {
+    next(error);
+  }
+};
