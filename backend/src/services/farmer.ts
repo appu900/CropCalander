@@ -383,11 +383,31 @@ class FarmerService {
   }
 
   async getDroneSprayingForms() {
-    return await prisma.droneSprayingFrom.findMany();
+    return await prisma.droneSprayingFrom.findMany({
+      include: {
+        farmer: {
+          select: {
+            name: true,
+            phoneNumber: true,
+            email: true,
+          },
+        },
+      },
+    });
   }
 
   async getSmartIrrigationForms() {
-    return await prisma.smartIrrigationForm.findMany();
+    return await prisma.smartIrrigationForm.findMany({
+       include:{
+        farmer: {
+          select: {
+            name: true,
+            phoneNumber: true,
+            email: true,
+          },
+        },
+       }
+    });
   }
 }
 
