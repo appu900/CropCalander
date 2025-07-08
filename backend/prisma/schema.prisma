@@ -214,6 +214,13 @@ model DeleteAccountFeedback {
   feedback          String
 }
 
+model Feedback {
+  id               Int    @id @default(autoincrement())
+  star             Int?
+  feedbackCategory String
+  feedback         String
+}
+
 enum RequestStatus {
   PENDING
   ACCEPTED

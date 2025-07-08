@@ -32,6 +32,7 @@ import {
   SmartIrrigationFormDto,
   SoilHealthMapFormDto,
 } from "../dtos/ServiceForms.dto";
+import { CreateFeedbackHandler, FetchAllFeedbackHandler } from "../controllers/Others.controller";
 
 const router = express.Router();
 
@@ -102,10 +103,17 @@ router.post(
   createDigitalSoilHealthForm
 );
 
-
-router.post("/farmer/ccr/updateactivity",uploadSingleImage,authMiddleware,addImagetoActicity)
+router.post(
+  "/farmer/ccr/updateactivity",
+  uploadSingleImage,
+  authMiddleware,
+  addImagetoActicity
+);
 
 router.get("/farmer/service/drone-spraying", getDroneSparyingForms);
 router.get("/farmer/service/smart-irrigation", getSmartIrrigationForms);
+
+router.post("/farmer/feedback", CreateFeedbackHandler);
+router.get("/farmer/feedback",FetchAllFeedbackHandler)
 
 export default router;
