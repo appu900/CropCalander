@@ -32,7 +32,7 @@ import {
   SmartIrrigationFormDto,
   SoilHealthMapFormDto,
 } from "../dtos/ServiceForms.dto";
-import { CreateFeedbackHandler, FetchAllFeedbackHandler } from "../controllers/Others.controller";
+import { CreateFeedbackHandler, CreateSoilHealthMonitorHandler, CrerateExpertVisitFormHandler, FetchAllFeedbackHandler } from "../controllers/Others.controller";
 
 const router = express.Router();
 
@@ -115,5 +115,9 @@ router.get("/farmer/service/smart-irrigation", getSmartIrrigationForms);
 
 router.post("/farmer/feedback", CreateFeedbackHandler);
 router.get("/farmer/feedback",FetchAllFeedbackHandler)
+
+
+router.post("/farmer/expert-visit",authMiddleware,CrerateExpertVisitFormHandler)
+router.post("/farmer/soilHealth-map",authMiddleware,CreateSoilHealthMonitorHandler)
 
 export default router;

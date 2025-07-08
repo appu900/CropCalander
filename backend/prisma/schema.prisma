@@ -23,6 +23,7 @@ model Farmer {
   digitalSoilHealth   SmartIrrigationForm[] @relation("FarmerToSmartIrrigationForm")
   soilHealthMap       SoilHealthMapForm[]   @relation("FarmerToSoilHealthMapForm")
   DroneSprayingFrom   DroneSprayingFrom[]   @relation("FarmerToDroneSprayingFrom")
+  expertVisit         ExpertVisit[]
 }
 
 enum IrrigationType {
@@ -220,6 +221,19 @@ model Feedback {
   feedbackCategory String
   feedback         String
 }
+
+model ExpertVisit {
+  id           Int    @id @default(autoincrement())
+  farmLocation String
+  cropType     String
+  AreainHector String
+  Query        String
+  farmer       Farmer @relation(fields: [farmerID], references: [id])
+  farmerID     Int
+}
+
+
+
 
 enum RequestStatus {
   PENDING
