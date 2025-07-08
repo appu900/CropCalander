@@ -6,6 +6,7 @@ import {
   MaxLength,
   IsOptional,
   minLength,
+  isNotEmpty,
 } from "class-validator";
 
 export class CreateFarmerDTO {
@@ -30,22 +31,20 @@ export class CreateFarmerDTO {
 
   @IsString()
   @IsNotEmpty()
-  address!:string
+  address!: string;
 
   @IsOptional()
-  profilePic?:string
+  profilePic?: string;
 }
-
 
 export class FarmerResponseDTO {
   name!: string;
   email!: string | null;
   phoneNumber!: string;
   token!: string;
-  role!:string;
-  profilePic!:string | null
+  role!: string;
+  profilePic!: string | null;
 }
-
 
 export class FarmerLoginDTO {
   @IsNotEmpty({ message: "Phone Number is Required" })
@@ -101,9 +100,23 @@ export class FarmerCropCalendarActivityDTO {
   endTime!: string;
 
   @IsNotEmpty()
+  startDate!:Date
+
+  @IsNotEmpty()
   description!: string;
 }
 
+export class PostActivityDTO {
+  imageUrl?: string;
+  @IsNotEmpty()
+  caption!: string;
+
+  @IsNotEmpty()
+  userID!: number;
+
+  @IsNotEmpty()
+  activityID!: number;
+}
 
 export class UpdateFarmerDTO {
   @IsString()
@@ -129,8 +142,4 @@ export class UpdateFarmerDTO {
   profilePic?: string;
 }
 
-
-
-
-
-// ip adress of the server - 
+// ip adress of the server -

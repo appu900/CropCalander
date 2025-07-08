@@ -5,6 +5,7 @@ import {
   FarmerCropCalendarCreationDTO,
   FarmerLoginDTO,
   FarmerResponseDTO,
+  PostActivityDTO,
   UpdateFarmerDTO,
 } from "../dtos/farmer.dto";
 import { checkPassword, encryptPassword } from "../utils/encrypt.utils";
@@ -20,6 +21,7 @@ import {
   SmartIrrigationFormDto,
   SoilHealthMapFormDto,
 } from "../dtos/ServiceForms.dto";
+import { response } from "express";
 
 class FarmerService {
   async createFarmer(data: CreateFarmerDTO): Promise<FarmerResponseDTO> {
@@ -189,6 +191,7 @@ class FarmerService {
             startTime: payload.startTime,
             endTime: payload.endTime,
             farmerCropCalendarId: cropCalendarId,
+            startDate:payload.startDate
           },
         });
       return updatedCropCalendar;
@@ -196,6 +199,10 @@ class FarmerService {
       throw error;
     }
   }
+
+  // async addAimageToActivityWithPostAutomation(
+
+  // )
 
   // ** get all cropcalendar  for farmer
 
@@ -398,7 +405,7 @@ class FarmerService {
 
   async getSmartIrrigationForms() {
     return await prisma.smartIrrigationForm.findMany({
-       include:{
+      include: {
         farmer: {
           select: {
             name: true,
@@ -406,8 +413,34 @@ class FarmerService {
             email: true,
           },
         },
-       }
+      },
     });
+  }
+
+  async addImagetoActivityAutomation(payload: PostActivityDTO) {
+    await prisma.$transaction(async (tx) => {
+      const response = await tx.farmerCropCalendarActivity.update({
+        where: {
+          id: Number(payload.activityID),
+        },
+        data: {
+          image: payload.imageUrl,
+        },
+      });
+
+      if (response) {
+        await tx.post.create({
+          data: {
+            content: payload.caption,
+            image: payload.imageUrl,
+            farmerId: Number(payload.userID),
+            postedByType: "FARMER",
+          },
+        });
+      }
+    });
+
+    return response;
   }
 }
 

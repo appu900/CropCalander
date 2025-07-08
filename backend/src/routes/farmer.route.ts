@@ -1,6 +1,7 @@
 import express from "express";
 import {
   addActivityToFarmerCropCalendar,
+  addImagetoActicity,
   createDigitalSoilHealthForm,
   createDroneSprayingnForm,
   createFarmer,
@@ -72,6 +73,7 @@ router.post(
   authMiddleware,
   makeAPost
 );
+
 router.put(
   "/farmer/activity/add/:id",
   uploadSingleImage,
@@ -99,6 +101,9 @@ router.post(
   authMiddleware,
   createDigitalSoilHealthForm
 );
+
+
+router.post("/farmer/ccr/updateactivity",uploadSingleImage,authMiddleware,addImagetoActicity)
 
 router.get("/farmer/service/drone-spraying", getDroneSparyingForms);
 router.get("/farmer/service/smart-irrigation", getSmartIrrigationForms);

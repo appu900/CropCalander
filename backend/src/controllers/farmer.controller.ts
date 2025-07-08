@@ -7,6 +7,7 @@ import {
   FarmerCropCalendarCreationDTO,
   FarmerLoginDTO,
   FarmerResponseDTO,
+  PostActivityDTO,
   UpdateFarmerDTO,
 } from "../dtos/farmer.dto";
 import FarmerService from "../services/farmer";
@@ -339,6 +340,53 @@ export const makeAPost = async (
     res.status(StatusCodes.CREATED).json({
       ok: true,
       response,
+    });
+  } catch (error) {
+    next(error);
+  }
+};
+
+export const addImagetoActicity = async (
+  req: AuthenticatedRequest,
+  res: Response,
+  next: NextFunction
+) => {
+  try {
+    const userID = req.userId;
+    const activityID = req.body.activityID;
+    if (!userID || !activityID) {
+      res.status(StatusCodes.BAD_REQUEST).json({
+        message: "authorization required",
+      });
+      return;
+    }
+    const caption = req.body.caption;
+    if (!caption) {
+      res.status(StatusCodes.BAD_REQUEST).json({
+        message: "caption is required",
+      });
+      return;
+    }
+    let fileUrl = "";
+    if (req.file) {
+      const fileName = `${Date.now()}-${req.file.originalname}`;
+      let optimizedBuffer: Buffer | null = await sharp(req.file.buffer)
+        .resize(1024)
+        .toBuffer();
+      fileUrl = await uploadToS3(optimizedBuffer, fileName, req.file.mimetype);
+    }
+
+    const payload: PostActivityDTO = {
+      caption: caption,
+      userID: userID,
+      activityID: activityID,
+      imageUrl: fileUrl,
+    };
+    const response = await farmerService.addImagetoActivityAutomation(payload);
+    console.log(response)
+    res.status(StatusCodes.CREATED).json({
+      message: "image added to activity",
+      imageurl:fileUrl
     });
   } catch (error) {
     next(error);
