@@ -9,13 +9,13 @@
     "skipLibCheck": true,
     "forceConsistentCasingInFileNames": true,
     "moduleResolution": "node",
-    "rootDir": "src",  // Set the root directory to `src`
-    "outDir": "dist",  // Output directory for compiled files
-    "baseUrl": "./",   // Base directory for non-relative module imports
+    "rootDir": ".",        // Use current directory as root
+    "outDir": "dist",
+    "baseUrl": "./",
     "paths": {
-      "@prisma/*": ["prisma/*"] // This allows you to import prisma files
+      "@prisma/*": ["prisma/*"]
     }
   },
-  "include": ["src"], // Include only the source files in the `src` directory
+  "include": ["src"], // Include all .ts files in project
   "exclude": ["node_modules", "dist"]
 }
