@@ -30,11 +30,29 @@ export const RegenerateOTP = async (
     }
     const otpObject = GenerateOTP();
     if (role === "FARMER") {
+      const farmer = await prisma.farmer.findUnique({ where: { phoneNumber } });
+      if (!farmer) {
+        res.status(StatusCodes.NOT_FOUND).json({
+          Status: "Not Found Error",
+          message: "no farmer found with this phonenumber",
+        });
+        return;
+      }
       await prisma.farmer.update({
         where: { phoneNumber: phoneNumber },
         data: { Otp: otpObject.otp, OtpExpireTime: otpObject.otpExpiresAt },
       });
     } else if (role === "EXPERT") {
+      const expert = await prisma.agriExpert.findUnique({
+        where: { phoneNumber },
+      });
+      if (!expert) {
+        res.status(StatusCodes.NOT_FOUND).json({
+          Status: "Not Found Error",
+          message: "No user found with this phone number",
+        });
+        return;
+      }
       await prisma.agriExpert.update({
         where: { phoneNumber: phoneNumber },
         data: { Otp: otpObject.otp, OtpExpireTime: otpObject.otpExpiresAt },
@@ -45,7 +63,7 @@ export const RegenerateOTP = async (
       Status: "Success",
       message: "Otp sent sucessfully",
     });
-    return
+    return;
   } catch (error) {
     next(error);
   }
@@ -74,16 +92,17 @@ export const AuthenticateFarmer = async (
       !farmer ||
       !farmer.Otp ||
       !farmer.OtpExpireTime ||
-      new Date() > farmer.OtpExpireTime
+      new Date() > farmer.OtpExpireTime ||
+      otp !== farmer.Otp
     ) {
       res.status(StatusCodes.BAD_REQUEST).json({
         Status: "Error",
-        message: "OTP Expired",
+        message: "Invalid OTP",
       });
       return;
     }
 
-    const token = generateToken(farmer?.id, farmer.role);
+    const token = generateToken(farmer.id, farmer.role);
     res.status(StatusCodes.OK).json({
       Status: "Account Verification Sucessfull",
       token: token,
@@ -138,6 +157,47 @@ export const handleFarmerAuthRegistrationHandler = async (
     res.status(StatusCodes.OK).json({
       Status: "Success",
       message: "OTP sent sucessfully",
+    });
+  } catch (error) {
+    next(error);
+  }
+};
+
+export const LoginFarmer = async (
+  req: Request,
+  res: Response,
+  next: NextFunction
+) => {
+  try {
+    const { phoneNumber } = req.body;
+    if (!phoneNumber) {
+      res.status(StatusCodes.BAD_REQUEST).json({
+        Status: "Validation Error",
+        message: "all fields are required",
+      });
+      return;
+    }
+    const farmer = await prisma.farmer.findUnique({
+      where: {
+        phoneNumber,
+      },
+    });
+    if (!farmer) {
+      res.status(StatusCodes.UNAUTHORIZED).json({
+        Status: "Error",
+        message: "Invalid phone number",
+      });
+      return;
+    }
+    const OTP = GenerateOTP();
+    await prisma.farmer.update({
+      where: { id: farmer.id },
+      data: { Otp: OTP.otp, OtpExpireTime: OTP.otpExpiresAt },
+    });
+    await sendOTP(phoneNumber, OTP.otp);
+    res.status(StatusCodes.OK).json({
+      Status: "Success",
+      message: "OTP sent successfully",
     });
   } catch (error) {
     next(error);

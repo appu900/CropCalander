@@ -28,11 +28,12 @@ export const AuthenticateExpert = async (
       !expert ||
       !expert.Otp ||
       !expert.OtpExpireTime ||
-      new Date() > expert.OtpExpireTime
+      new Date() > expert.OtpExpireTime ||
+      otp !== expert.Otp
     ) {
       res.status(StatusCodes.BAD_REQUEST).json({
         Status: "Error",
-        message: "OTP Expired",
+        message: "Invaid otp",
       });
       return;
     }
@@ -94,6 +95,18 @@ export const handleExpertAuthRegistrationHandler = async (
       Status: "Success",
       message: "OTP sent sucessfully",
     });
+  } catch (error) {
+    next(error);
+  }
+};
+
+export const ExpertLogin = async (
+  req: Request,
+  res: Response,
+  next: NextFunction
+) => {
+  try {
+    console.log("hello world brother");
   } catch (error) {
     next(error);
   }

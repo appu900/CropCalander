@@ -72,7 +72,6 @@ class CropCelendarService {
         const createdActivities = await prismaInstance.activity.createMany({
           data: activitiesData,
         });
-
         return true;
       });
     } catch (error) {
