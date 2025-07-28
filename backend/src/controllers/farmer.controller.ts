@@ -23,6 +23,7 @@ import {
   SmartIrrigationFormDto,
   SoilHealthMapFormDto,
 } from "../dtos/ServiceForms.dto";
+import { prisma } from "../prisma/client";
 const farmerService = new FarmerService();
 const cropCalendarRequestService = new CropCalanderRequestService();
 
@@ -383,10 +384,10 @@ export const addImagetoActicity = async (
       imageUrl: fileUrl,
     };
     const response = await farmerService.addImagetoActivityAutomation(payload);
-    console.log(response)
+    console.log(response);
     res.status(StatusCodes.CREATED).json({
       message: "image added to activity",
-      imageurl:fileUrl
+      imageurl: fileUrl,
     });
   } catch (error) {
     next(error);
@@ -586,6 +587,24 @@ export const getSmartIrrigationForms = async (
       ok: true,
       response,
     });
+  } catch (error) {
+    next(error);
+  }
+};
+
+export const getAllRequestedCropCalander = async (
+  req: AuthenticatedRequest,
+  res: Response,
+  next: NextFunction
+) => {
+  try {
+    const farmerID = req.userId;
+    const response = await prisma.cropCalandarRequest.findMany({
+      where: {
+        farmerId: farmerID,
+      },
+    });
+    res.status(StatusCodes.OK).json(response);
   } catch (error) {
     next(error);
   }

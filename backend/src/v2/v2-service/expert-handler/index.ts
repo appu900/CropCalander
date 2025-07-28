@@ -144,3 +144,26 @@ export const changeCropCalanderStatus = async (
     next(error);
   }
 };
+
+
+export const fetchCropCalenderRequest = async (
+  req: Request,
+  res: Response,
+  next: NextFunction
+) => {
+  try {
+    const requestedStatus = req.body.status;
+    const statusTobeQueried = requestedStatus.toUpperCase();
+    const cropCalendarRequests = await prisma.cropCalandarRequest.findMany({
+      where: {
+        status: statusTobeQueried,
+      },
+    });
+    res.status(StatusCodes.OK).json({
+      Status: "Success",
+      data: cropCalendarRequests,
+    });
+  } catch (error) {
+    next(error);
+  }
+};
