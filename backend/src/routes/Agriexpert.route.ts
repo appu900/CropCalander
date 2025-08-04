@@ -8,6 +8,7 @@ import { addAcitivity, generateCropCalendar, handlechangeStatusToCompleted } fro
 import { CropCalanderRequestDTO } from '../dtos/CropcalanderRequest';
 import { CropCalendarActivityDTO } from '../dtos/Cropcalendar';
 import { uploadSingleImage } from '../middleware/multerUpload.Middleware';
+import { fileupload, testUpload } from '../controllers/Form.controller';
 const router = express.Router();
 
 
@@ -25,6 +26,10 @@ router.put("/expert/ccr/:cropCalendarId",authMiddleware,handlechangeStatusToComp
 
 router.post("/expert/post/create",uploadSingleImage,authMiddleware,craeteAPost)
 router.post("/expert/comment/post/:id",authMiddleware,makeAComment)
+
+
+
+router.post("/expert/file-upload",fileupload.single('pdf'),testUpload)
 
 export default router;
 

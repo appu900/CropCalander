@@ -18,6 +18,7 @@ import { Request, Response, NextFunction } from "express";
 import bodyParser from "body-parser";
 import v2Routes from "../src/v2/v2-routes/index"
 import fromData from "express-form-data";
+import farmerFormRoutes from "./controllers/Farmer.forms"
 import cors from "cors";
 
 const app = express();
@@ -36,6 +37,7 @@ async function startServer() {
   app.use("/api/posts", PostRoutes);
   app.use("/api/ccr", CropCalanderRequestRoutes);
   app.use("/api/v2",v2Routes)
+  app.use("/api/form/",farmerFormRoutes)
 
   app.get("/test", (req, res) => {
     res.send("Hello World");
