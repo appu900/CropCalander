@@ -8,7 +8,7 @@ import { addAcitivity, generateCropCalendar, handlechangeStatusToCompleted } fro
 import { CropCalanderRequestDTO } from '../dtos/CropcalanderRequest';
 import { CropCalendarActivityDTO } from '../dtos/Cropcalendar';
 import { uploadSingleImage } from '../middleware/multerUpload.Middleware';
-import { fileupload, testUpload } from '../controllers/Form.controller';
+import { fileupload, testUpload, uploadDroneSprayingSolution, uploadExpertvisitSolution, uploadSmartIrrigatinSolution, uploadSoilhealthMapSolution } from '../controllers/Form.controller';
 const router = express.Router();
 
 
@@ -30,6 +30,10 @@ router.post("/expert/comment/post/:id",authMiddleware,makeAComment)
 
 
 router.post("/expert/file-upload",fileupload.single('pdf'),testUpload)
+router.post("/expert/file-upload/dronespraying/:id",fileupload.single("pdf"),uploadDroneSprayingSolution)
+router.post("/expert/file-upload/soilhealthmap/:id",fileupload.single("pdf"),uploadSoilhealthMapSolution)
+router.post("/expert/file-upload/smartirrigation/:id",fileupload.single("pdf"),uploadSmartIrrigatinSolution)
+router.post("/expert/file-upload/expertvisit/:id",fileupload.single("pdf"),uploadExpertvisitSolution)
 
 export default router;
 
