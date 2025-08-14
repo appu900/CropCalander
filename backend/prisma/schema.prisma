@@ -234,15 +234,18 @@ model Feedback {
 }
 
 model ExpertVisit {
-  id           Int        @id @default(autoincrement())
-  farmLocation String
-  cropType     String
-  AreainHector String
-  Query        String
-  farmer       Farmer     @relation(fields: [farmerID], references: [id])
-  farmerID     Int
-  status       Formstatus @default(PENDING)
-  pdf          String?
+  id                Int        @id @default(autoincrement())
+  farmLocation      String
+  cropType          String
+  AreainHector      String
+  Query             String
+  visitPurpose      String?
+  soilType          SoilType?
+  preferedVisitDate DateTime?
+  farmer            Farmer     @relation(fields: [farmerID], references: [id])
+  farmerID          Int
+  status            Formstatus @default(PENDING)
+  pdf               String?
 }
 
 enum RequestStatus {

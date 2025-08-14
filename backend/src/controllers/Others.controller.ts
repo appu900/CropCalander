@@ -2,6 +2,7 @@ import { Request, Response, NextFunction } from "express";
 import { StatusCodes } from "http-status-codes";
 import { prisma } from "../prisma/client";
 import { AuthenticatedRequest } from "src/middleware/authenticationMiddleware";
+import { SoilType } from "@prisma/client";
 
 export const CreateFeedbackHandler = async (
   req: Request,
@@ -53,10 +54,21 @@ export const CrerateExpertVisitFormHandler = async (
         message: "Authorization required",
       });
     }
-    const { farmLocation, cropType, AreainHector, Query } = req.body;
+    const {
+      farmLocation,
+      cropType,
+      AreainHector,
+      Query,
+      visitPurpose,
+      soilType,
+      preferedVisitDate,
+    } = req.body;
 
     const data = await prisma.expertVisit.create({
       data: {
+        soilType: soilType,
+        visitPurpose: visitPurpose,
+        preferedVisitDate: preferedVisitDate,
         farmLocation,
         cropType,
         AreainHector,
@@ -66,6 +78,27 @@ export const CrerateExpertVisitFormHandler = async (
     });
 
     res.status(201).json(data);
+  } catch (error) {
+    next(error);
+  }
+};
+
+export const fetchAllExpertVisitForm = async (
+  req: AuthenticatedRequest,
+  res: Response,
+  next: NextFunction
+) => {
+  try {
+    const userID = req.userId;
+    const data = await prisma.expertVisit.findMany({
+      where: {
+        farmerID: userID,
+      },
+    });
+    res.status(200).json({
+      success: true,
+      data,
+    });
   } catch (error) {
     next(error);
   }
