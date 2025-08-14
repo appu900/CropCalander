@@ -116,6 +116,7 @@ export const AuthenticateFarmer = async (
       token: token,
       role: farmer.role,
       name: farmer.name,
+      FCMtoken:farmer.FCMToken
     });
   } catch (error) {
     next(error);
