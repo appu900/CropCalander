@@ -12,6 +12,7 @@ model Farmer {
   name                String
   email               String?
   password            String
+  FCMToken            String?
   Otp                 String?
   OtpExpireTime       DateTime?
   phoneNumber         String                @unique
@@ -45,8 +46,8 @@ model SmartIrrigationForm {
   areaInHectares Float
   query          String
   createdAt      DateTime       @default(now())
-  status Formstatus @default(PENDING)
-  pdf String?
+  status         Formstatus     @default(PENDING)
+  pdf            String?
 }
 
 enum SoilType {
@@ -59,31 +60,31 @@ enum SoilType {
 }
 
 model SoilHealthMapForm {
-  id             Int      @id @default(autoincrement())
+  id             Int        @id @default(autoincrement())
   farmerId       Int
-  farmer         Farmer   @relation("FarmerToSoilHealthMapForm", fields: [farmerId], references: [id], onDelete: Cascade)
+  farmer         Farmer     @relation("FarmerToSoilHealthMapForm", fields: [farmerId], references: [id], onDelete: Cascade)
   farmLoaction   String
   soilType       SoilType
   cropType       String
   areaInHectares Float
   query          String
-  createdAt      DateTime @default(now())
-  status Formstatus @default(PENDING)
-  pdf String?
+  createdAt      DateTime   @default(now())
+  status         Formstatus @default(PENDING)
+  pdf            String?
 }
 
 model DroneSprayingFrom {
-  id             Int      @id @default(autoincrement())
+  id             Int        @id @default(autoincrement())
   farmerId       Int
-  farmer         Farmer   @relation("FarmerToDroneSprayingFrom", fields: [farmerId], references: [id], onDelete: Cascade)
+  farmer         Farmer     @relation("FarmerToDroneSprayingFrom", fields: [farmerId], references: [id], onDelete: Cascade)
   farmLoaction   String
   cropType       String
   areaInHectares Float
   sprayDate      DateTime
   query          String
-  createdAt      DateTime @default(now())
-  status Formstatus @default(PENDING)
-  pdf String?
+  createdAt      DateTime   @default(now())
+  status         Formstatus @default(PENDING)
+  pdf            String?
 }
 
 model Post {
@@ -155,7 +156,7 @@ model FarmerCropCalendarActivity {
 model AgriExpert {
   id                   Int                   @id @default(autoincrement())
   name                 String
-  email                String?                @unique
+  email                String?               @unique
   password             String
   Otp                  String?
   OtpExpireTime        DateTime?
@@ -233,20 +234,16 @@ model Feedback {
 }
 
 model ExpertVisit {
-  id           Int    @id @default(autoincrement())
+  id           Int        @id @default(autoincrement())
   farmLocation String
   cropType     String
   AreainHector String
   Query        String
-  farmer       Farmer @relation(fields: [farmerID], references: [id])
+  farmer       Farmer     @relation(fields: [farmerID], references: [id])
   farmerID     Int
-  status Formstatus @default(PENDING)
-  pdf String?
+  status       Formstatus @default(PENDING)
+  pdf          String?
 }
-
-
-
-
 
 enum RequestStatus {
   PENDING

@@ -75,7 +75,7 @@ export const AuthenticateFarmer = async (
   next: NextFunction
 ) => {
   try {
-    const { phoneNumber, otp } = req.body;
+    const { phoneNumber, otp, FCMtoken } = req.body;
     if (!phoneNumber || !otp) {
       res.status(StatusCodes.BAD_REQUEST).json({
         Status: "Validation Error",
@@ -102,6 +102,14 @@ export const AuthenticateFarmer = async (
       return;
     }
 
+    await prisma.farmer.update({
+      where: {
+        phoneNumber: farmer.phoneNumber,
+      },
+      data: {
+        FCMToken: FCMtoken,
+      },
+    });
     const token = generateToken(farmer.id, farmer.role);
     res.status(StatusCodes.OK).json({
       Status: "Account Verification Sucessfull",
