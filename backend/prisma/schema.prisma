@@ -27,6 +27,7 @@ model Farmer {
   soilHealthMap       SoilHealthMapForm[]   @relation("FarmerToSoilHealthMapForm")
   DroneSprayingFrom   DroneSprayingFrom[]   @relation("FarmerToDroneSprayingFrom")
   expertVisit         ExpertVisit[]
+  cropHealthMonitor  CropHealthMonitor[]
 }
 
 enum IrrigationType {
@@ -246,6 +247,18 @@ model ExpertVisit {
   farmerID          Int
   status            Formstatus @default(PENDING)
   pdf               String?
+}
+
+model CropHealthMonitor {
+  id             Int      @id @default(autoincrement())
+  farmerLocation String
+  soilType       SoilType
+  cropType       String
+  query          String
+  farmerID       Int
+  farmer         Farmer   @relation(fields: [farmerID], references: [id])
+  status Formstatus @default(PENDING)
+  pdf String?
 }
 
 enum RequestStatus {

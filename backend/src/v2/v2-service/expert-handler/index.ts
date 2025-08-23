@@ -145,7 +145,6 @@ export const changeCropCalanderStatus = async (
   }
 };
 
-
 export const fetchCropCalenderRequest = async (
   req: Request,
   res: Response,
@@ -162,6 +161,86 @@ export const fetchCropCalenderRequest = async (
     res.status(StatusCodes.OK).json({
       Status: "Success",
       data: cropCalendarRequests,
+    });
+  } catch (error) {
+    next(error);
+  }
+};
+
+export const fetchAllDroneSprayingRequest = async (
+  req: Request,
+  res: Response,
+  next: NextFunction
+) => {
+  try {
+    const data = await prisma.droneSprayingFrom.findMany({
+      where: {
+        status: "PENDING",
+      },
+    });
+    res.status(200).json({
+      success: true,
+      data,
+    });
+  } catch (error) {
+    next(error);
+  }
+};
+
+export const fetchAllSmartIrrigationRequest = async (
+  req: Request,
+  res: Response,
+  next: NextFunction
+) => {
+  try {
+    const data = await prisma.smartIrrigationForm.findMany({
+      where: {
+        status: "PENDING",
+      },
+    });
+    res.status(200).json({
+      success: true,
+      data,
+    });
+  } catch (error) {
+    next(error);
+  }
+};
+
+export const fetchAllExpertVisitRequest = async (
+  req: Request,
+  res: Response,
+  next: NextFunction
+) => {
+  try {
+    const data = await prisma.expertVisit.findMany({
+      where: {
+        status: "PENDING",
+      },
+    });
+    res.status(200).json({
+      success: true,
+      data,
+    });
+  } catch (error) {
+    next(error);
+  }
+};
+
+export const fetchAllSoilHealthMapRequest = async (
+  req: Request,
+  res: Response,
+  next: NextFunction
+) => {
+  try {
+    const data = await prisma.soilHealthMapForm.findMany({
+      where: {
+        status: "PENDING",
+      },
+    });
+    res.status(200).json({
+      success: true,
+      data,
     });
   } catch (error) {
     next(error);

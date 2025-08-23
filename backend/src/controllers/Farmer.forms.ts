@@ -26,14 +26,17 @@ router.get(
       },
     });
     res.json(data);
-    return
+    return;
   }
 );
 
 // GET /farmer/:farmerId/expert-visits
-router.get("/expert-visits",authMiddleware, async (req:AuthenticatedRequest, res: Response) => {
+router.get(
+  "/expert-visits",
+  authMiddleware,
+  async (req: AuthenticatedRequest, res: Response) => {
     const farmerId = req.userId;
-    console.log(farmerId)
+    console.log(farmerId);
     if (!farmerId) {
       res.status(400).json({
         success: false,
@@ -41,18 +44,22 @@ router.get("/expert-visits",authMiddleware, async (req:AuthenticatedRequest, res
       });
       return;
     }
-     const data = await prisma.expertVisit.findMany({
+    const data = await prisma.expertVisit.findMany({
       where: {
-        farmerID:farmerId
+        farmerID: farmerId,
       },
     });
     res.json(data);
-    return
-});
+    return;
+  }
+);
 
 // GET /farmer/:farmerId/soil-health
-router.get("/soil-health", authMiddleware, async (req:AuthenticatedRequest, res: Response) => {
-   const farmerId = req.userId;
+router.get(
+  "/soil-health",
+  authMiddleware,
+  async (req: AuthenticatedRequest, res: Response) => {
+    const farmerId = req.userId;
     if (!farmerId) {
       res.status(400).json({
         success: false,
@@ -60,19 +67,20 @@ router.get("/soil-health", authMiddleware, async (req:AuthenticatedRequest, res:
       });
       return;
     }
-     const data = await prisma.soilHealthMapForm.findMany({
+    const data = await prisma.soilHealthMapForm.findMany({
       where: {
-        farmerId:farmerId
+        farmerId: farmerId,
       },
     });
     res.json(data);
-    return
-});
+    return;
+  }
+);
 
 // GET /farmer/:farmerId/smart-irrigation
 router.get(
   "/smart-irrigation",
-  async (req:AuthenticatedRequest, res: Response) => {
+  async (req: AuthenticatedRequest, res: Response) => {
     const farmerId = req.userId;
     if (!farmerId) {
       res.status(400).json({
@@ -81,75 +89,147 @@ router.get(
       });
       return;
     }
-     const data = await prisma.soilHealthMapForm.findMany({
+    const data = await prisma.soilHealthMapForm.findMany({
       where: {
-        farmerId:farmerId
+        farmerId: farmerId,
       },
     });
     res.json(data);
-    return
+    return;
   }
 );
 
-
-router.post('/expert-visits', authMiddleware, async (req:AuthenticatedRequest, res: Response) => {
-  try {
-    const farmerId = req.userId;
+router.post(
+  "/expert-visits",
+  authMiddleware,
+  async (req: AuthenticatedRequest, res: Response) => {
+    try {
+      const farmerId = req.userId;
       if (!farmerId) {
-      res.status(400).json({
-        success: false,
-        message: "bad request",
+        res.status(400).json({
+          success: false,
+          message: "bad request",
+        });
+        return;
+      }
+      const { farmLocation, cropType, AreainHector, Query } = req.body;
+
+      const visit = await prisma.expertVisit.create({
+        data: {
+          farmerID: +farmerId,
+          farmLocation,
+          cropType,
+          AreainHector,
+          Query,
+        },
       });
+
+      res.status(201).json(visit);
+    } catch (error) {
+      console.error(error);
+      res.status(500).json({ error: "Failed to create expert visit request" });
       return;
     }
-    const { farmLocation, cropType, AreainHector, Query } = req.body;
-
-    const visit = await prisma.expertVisit.create({
-      data: {
-        farmerID:+farmerId,
-        farmLocation,
-        cropType,
-        AreainHector,
-        Query,
-      },
-    });
-
-    res.status(201).json(visit);
-  } catch (error) {
-    console.error(error);
-    res.status(500).json({ error: 'Failed to create expert visit request' });
-    return
   }
-});
+);
 
-router.post('/soil-health', authMiddleware, async (req:AuthenticatedRequest, res: Response) => {
-  try {
-    const farmerId = req.userId;
+router.post(
+  "/soil-health",
+  authMiddleware,
+  async (req: AuthenticatedRequest, res: Response) => {
+    try {
+      const farmerId = req.userId;
       if (!farmerId) {
-      res.status(400).json({
-        success: false,
-        message: "bad request",
+        res.status(400).json({
+          success: false,
+          message: "bad request",
+        });
+        return;
+      }
+      const { farmLoaction, soilType, cropType, areaInHectares, query } =
+        req.body;
+
+      const soilForm = await prisma.soilHealthMapForm.create({
+        data: {
+          farmerId: +farmerId,
+          farmLoaction,
+          soilType, // Must be one of: "LOAM" | "CLAY" | "SANDY" | "SILT" | "PEAT" | "CHALK"
+          cropType,
+          areaInHectares,
+          query,
+        },
       });
-      return;
+
+      res.status(201).json(soilForm);
+    } catch (error) {
+      console.error(error);
+      res.status(500).json({ error: "Failed to create soil health map form" });
     }
-    const { farmLoaction, soilType, cropType, areaInHectares, query} = req.body;
-
-    const soilForm = await prisma.soilHealthMapForm.create({
-      data: {
-        farmerId:+farmerId,
-        farmLoaction,
-        soilType, // Must be one of: "LOAM" | "CLAY" | "SANDY" | "SILT" | "PEAT" | "CHALK"
-        cropType,
-        areaInHectares,
-        query,
-      },
-    });
-
-    res.status(201).json(soilForm);
-  } catch (error) {
-    console.error(error);
-    res.status(500).json({ error: 'Failed to create soil health map form' });
   }
-});
+);
+
+router.post(
+  "/crophealth-Monitor",
+  authMiddleware,
+  async (req: AuthenticatedRequest, res: Response) => {
+    try {
+      const farmerID = req.userId;
+      if (!farmerID) {
+        res.status(400).json({
+          success: false,
+          message: "bad request",
+        });
+        return;
+      }
+
+      const { farmerLocation, soilType, cropType, query } = req.body;
+      const result = await prisma.cropHealthMonitor.create({
+        data: {
+          farmerLocation,
+          soilType,
+          cropType,
+          query,
+          farmerID: +farmerID,
+        },
+      });
+      res.status(201).json({
+        success: true,
+        result,
+      });
+    } catch (error: any) {
+      console.log("Error imn creating crophealth monitor", error.message);
+      res.status(500).json({ success: false, error: error.message });
+    }
+  }
+);
+
+router.get(
+  "/crophealth-Monitor",
+  authMiddleware,
+  async (req: AuthenticatedRequest, res: Response) => {
+    try {
+      const farmerID = req.userId;
+      if (!farmerID) {
+        res.status(400).json({
+          success: false,
+          message: "bad request",
+        });
+        return;
+      }
+      const result = await prisma.cropHealthMonitor.findMany({
+        where: {
+          farmerID: +farmerID,
+        },
+      });
+      res.status(201).json({
+        success: true,
+        result,
+      });
+    } catch (error: any) {
+      console.log("Error imn creating crophealth monitor", error.message);
+      res.status(500).json({ success: false, error: error.message });
+    }
+  }
+);
 
 export default router;
