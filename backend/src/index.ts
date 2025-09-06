@@ -40,7 +40,7 @@ async function startServer() {
   app.use("/api/form/",farmerFormRoutes)
 
   app.get("/test", (req, res) => {
-    res.send("Hello World");
+    res.send("Hello World brother");
   });
 
   app.get("/ping", authMiddleware, async (req: Request, res: Response) => {
